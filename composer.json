@@ -1,0 +1,22 @@
+{
+    "name": "the-broken-tile/bgg-api",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Rusi Papazov",
+            "email": "rusi.papazov@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "symfony/cache": "^5.3",
+        "symfony/css-selector": "^5.3",
+        "symfony/dom-crawler": "^5.3",
+        "symfony/http-client": "^5.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "TheBrokenTile\\": "src/"
+        }
+    }
+}
