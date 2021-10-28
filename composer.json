@@ -1,6 +1,11 @@
 {
     "name": "the-broken-tile/bgg-api",
     "type": "library",
+    "description": "A PHP sdk for the BoardGameGeek api",
+    "keywords": [
+        "sdk",
+        "boardgamegeek"
+    ],
     "authors": [
         {
             "name": "Rusi Papazov",
