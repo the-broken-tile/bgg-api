@@ -2,6 +2,7 @@
 
 namespace TheBrokenTile\BoardGameGeekApi\ObjectBuilder;
 
+use DomainException;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterface;
 
 final class ObjectBuilder
@@ -21,5 +22,7 @@ final class ObjectBuilder
                 return $builder->build($response);
             }
         }
+
+        throw new DomainException('Unknown response');
     }
 }
