@@ -6,14 +6,14 @@ use Symfony\Component\DomCrawler\Crawler;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObject;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\Expansion;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\Game;
+use TheBrokenTile\BoardGameGeekApi\Request\GameRequest;
+use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 final class GameBuilder extends AbstractObjectBuilder
 {
-    public function supports(string $response): bool
+    public function supports(RequestInterface $request): bool
     {
-        return (str_contains($response, '<item type="boardgame"')
-            || str_contains($response, '<item type="boardgameexpansion"'))
-            && !str_contains($response, '<items total="');
+        return $request instanceof GameRequest;
     }
 
     /**

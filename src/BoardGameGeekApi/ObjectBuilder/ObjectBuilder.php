@@ -4,6 +4,7 @@ namespace TheBrokenTile\BoardGameGeekApi\ObjectBuilder;
 
 use DomainException;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterface;
+use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 final class ObjectBuilder
 {
@@ -15,10 +16,10 @@ final class ObjectBuilder
         $this->builders = $builders;
     }
 
-    public function build(string $response): DataTransferObjectInterface
+    public function build(RequestInterface $request, string $response): DataTransferObjectInterface
     {
         foreach($this->builders as $builder) {
-            if ($builder->supports($response)) {
+            if ($builder->supports($request)) {
                 return $builder->build($response);
             }
         }

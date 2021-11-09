@@ -9,13 +9,15 @@ use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterfac
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\User;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserGuild;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserTopItem;
+use TheBrokenTile\BoardGameGeekApi\Request\UserRequest;
+use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 final class UserBuilder implements ObjectBuilderInterface
 {
 
-    public function supports(string $response): bool
+    public function supports(RequestInterface $request): bool
     {
-        return preg_match('/\<user id="\d+" name="[^"]+"/', $response) !== false;
+        return $request instanceof UserRequest;
     }
 
     public function build(string $response): DataTransferObjectInterface

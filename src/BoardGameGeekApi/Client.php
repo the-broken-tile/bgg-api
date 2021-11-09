@@ -29,7 +29,7 @@ final class Client implements ClientInterface
         $response = $this->cache->get($this->buildCacheKey($request), function (/*ItemInterface $item*/) use ($url): string {
             return $this->client->request(self::METHOD, $url)->getContent();
         });
-        $thing = $this->builder->build($response);
+        $thing = $this->builder->build($request, $response);
 
         return new Response($thing);
     }
