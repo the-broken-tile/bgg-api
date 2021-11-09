@@ -7,8 +7,9 @@ use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 final class CollectionRequest implements RequestInterface
 {
     private string $username;
-    private ?int $version = null;
-    private ?int $brief = null;
+    private ?bool $version = null;
+    private ?bool $brief = null;
+    private ?bool $stats = null;
 
     public function __construct(string $username)
     {
@@ -26,12 +27,13 @@ final class CollectionRequest implements RequestInterface
             self::PARAM_COLLECTION_USERNAME => $this->username,
             self::PARAM_COLLECTION_VERSION => $this->version,
             self::PARAM_COLLECTION_BRIEF => $this->brief,
+            self::PARAM_STATS => $this->stats,
         ];
     }
 
     public function version(): self
     {
-        $this->version = 1;
+        $this->version = true;
 
         return $this;
     }
@@ -43,6 +45,13 @@ final class CollectionRequest implements RequestInterface
     public function brief(): self
     {
         $this->brief = true;
+
+        return $this;
+    }
+
+    public function stats(): self
+    {
+        $this->stats = true;
 
         return $this;
     }

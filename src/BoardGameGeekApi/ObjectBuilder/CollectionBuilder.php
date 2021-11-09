@@ -14,8 +14,11 @@ use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameName;
 use TheBrokenTile\BoardGameGeekApi\Request\CollectionRequest;
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
-final class CollectionBuilder implements ObjectBuilderInterface
+final class CollectionBuilder extends AbstractObjectBuilder
 {
+    protected string $statsKey = 'stats';
+    protected string $ratingsKey = 'rating';
+
     public function supports(RequestInterface $request): bool
     {
         return $request instanceof CollectionRequest;
@@ -54,6 +57,8 @@ final class CollectionBuilder implements ObjectBuilderInterface
             $this->addNumberOfPlays($itemCrawler, $item);
             $this->addComment($itemCrawler, $item);
             $this->addVersion($itemCrawler, $item);
+            $item->stats = $this->getStats($itemCrawler);
+
             $collection->items[] = $item;
         }
     }

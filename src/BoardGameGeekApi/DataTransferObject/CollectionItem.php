@@ -16,6 +16,7 @@ final class CollectionItem
     public ?int $numberOfPlays = null;
     public ?string $comment = null;
     public ?CollectionVersion $version = null;
+    public ?GameStatistics $stats = null;
 
     public function __construct(int $objectId, string $objectType, string $subType, int $collId)
     {

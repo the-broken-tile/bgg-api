@@ -4,16 +4,68 @@ namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
 final class GameRatings
 {
-    public int $usersRated;
+    /**
+     * Will be set for collection with stats=1
+     * Won't be set for collection with stats=1 and brief=1
+     */
+    public ?int $usersRated;
+
+    /**
+     * Will be set for collection with stats=1
+     * Will be set for collection with stats=1 and brief=1
+     */
     public float $average;
+
+    /**
+     * Will be set for collection with stats=1
+     * Will be set for collection with stats=1 and brief=1
+     */
     public float $bayesAverage;
-    public float $stdDev;
-    public float $median;
-    public int $owned;
-    public int $trading;
-    public int $wanting;
-    public int $wishing;
-    public int $numComments;
-    public int $numWeights;
-    public float $averageWeight;
+
+    /**
+     * Will be set for collection with stats=1
+     * Won't be set for collection with stats=1 and brief=1
+     */
+    public ?float $stdDev;
+
+    /**
+     * Will be set for collection with stats=1
+     * Won't be set for collection with stats=1 and brief=1
+     */
+    public ?float $median;
+
+    /**
+     * Won't be set for collection with stats=1
+     */
+    public ?int $owned = null;
+
+    /**
+     * Won't be set for collection with stats=1
+     */
+    public ?int $trading = null;
+
+    /**
+     * Won't be set for collection with stats=1
+     */
+    public ?int $wanting = null;
+
+    /**
+     * Won't be set for collection with stats=1
+     */
+    public ?int $wishing = null;
+
+    /**
+     * Won't be set for collection with stats=1
+     */
+    public ?int $numComments = null;
+
+    /**
+     * Won't be set for collection with stats=1
+     */
+    public ?int $numWeights = null;
+
+    /**
+     * Won't be set for collection with stats=1
+     */
+    public ?float $averageWeight = null;
 }

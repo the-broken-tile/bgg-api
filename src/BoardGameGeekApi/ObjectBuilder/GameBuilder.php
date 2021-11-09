@@ -40,7 +40,7 @@ final class GameBuilder extends AbstractObjectBuilder
         $object->maxPlayTime = $this->getMaxPlayTime();
         $object->minAge = $this->getMinAge();
         $object->links = $this->getLinks();
-        $object->stats = $this->getStats();
+        $object->stats = $this->getStats($this->crawler);
 
         return $object;
     }
