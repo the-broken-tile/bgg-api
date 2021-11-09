@@ -2,6 +2,7 @@
 
 namespace TheBrokenTile\BoardGameGeekApi;
 
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilder;
@@ -23,13 +24,18 @@ final class Client implements ClientInterface
         $this->builder = $gameBuilder;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function request(RequestInterface $request): ResponseInterface
     {
         $url = $this->generateUrl($request);
+
         $response = $this->cache->get($this->buildCacheKey($request), function (/*ItemInterface $item*/) use ($url): string {
             return $this->client->request(self::METHOD, $url)->getContent();
         });
-        $thing = $this->builder->build($response);
+
+        $thing = $this->builder->build($request, $response);
 
         return new Response($thing);
     }

@@ -15,6 +15,7 @@
     ],
     "require": {
         "php": ">=7.4",
+        "ext-dom": "*",
         "symfony/cache": "^5.3",
         "symfony/css-selector": "^5.3",
         "symfony/dom-crawler": "^5.3",

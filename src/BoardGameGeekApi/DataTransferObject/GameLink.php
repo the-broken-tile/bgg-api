@@ -6,6 +6,7 @@ final class GameLink
 {
     public int $id;
     public string $type;
+    /** @var string "boardgamepublisher", "boardgamepublisher", "boardgameartist", "language", etc... */
     public string $value;
 
     public function __construct(int $id, string $type, string $value)

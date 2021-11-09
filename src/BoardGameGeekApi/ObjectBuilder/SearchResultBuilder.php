@@ -7,12 +7,14 @@ use Symfony\Component\DomCrawler\Crawler;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameName;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\SearchItem;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\SearchResults;
+use TheBrokenTile\BoardGameGeekApi\Request\SearchRequest;
+use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 final class SearchResultBuilder extends AbstractObjectBuilder
 {
-    public function supports(string $response): bool
+    public function supports(RequestInterface $request): bool
     {
-        return str_contains($response, '<items total="');
+        return $request instanceof SearchRequest;
     }
 
     public function build(string $response): SearchResults

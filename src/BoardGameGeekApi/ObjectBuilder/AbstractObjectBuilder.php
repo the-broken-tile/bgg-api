@@ -13,6 +13,8 @@ use TheBrokenTile\BoardGameGeekApi\DataTransferObject\PollResult;
 
 abstract class AbstractObjectBuilder implements ObjectBuilderInterface
 {
+    protected string $statsKey = 'statistics';
+    protected string $ratingsKey = 'ratings';
     protected Crawler $crawler;
 
     protected function getId(): int
@@ -128,29 +130,54 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
         return $links;
     }
 
-    protected function getStats(): ?GameStatistics
+    protected function getStats(Crawler $crawler): ?GameStatistics
     {
-        if ($this->crawler->filter('statistics')->count() === 0) {
+        $statsCrawler = $crawler->filter($this->statsKey);
+        if ($statsCrawler->count() === 0) {
             return null;
         }
         $stats = new GameStatistics();
         $ratings = new GameRatings();
+        $ratingsCrawler = $statsCrawler->filter($this->ratingsKey);
 
-        $ratings->usersRated = (int) $this->crawler->filter('statistics ratings usersrated')->attr('value');
-        $ratings->average = (float) $this->crawler->filter('statistics ratings average')->attr('value');
-        $ratings->bayesAverage = (float) $this->crawler->filter('statistics ratings bayesaverage')->attr('value');
-        $ratings->stdDev = (float) $this->crawler->filter('statistics ratings stddev')->attr('value');
-        $ratings->median = (float) $this->crawler->filter('statistics ratings median')->attr('value');
-        $ratings->owned = (int) $this->crawler->filter('statistics ratings owned')->attr('value');
-        $ratings->trading = (int) $this->crawler->filter('statistics ratings trading')->attr('value');
-        $ratings->wanting = (int) $this->crawler->filter('statistics ratings wanting')->attr('value');
-        $ratings->wishing = (int) $this->crawler->filter('statistics ratings wishing')->attr('value');
-        $ratings->numComments = (int) $this->crawler->filter('statistics ratings numcomments')->attr('value');
-        $ratings->numWeights = (int) $this->crawler->filter('statistics ratings numweights')->attr('value');
-        $ratings->averageWeight = (int) $this->crawler->filter('statistics ratings averageweight')->attr('value');
+        //These two should always  be set
+        $ratings->average = (float) $ratingsCrawler->filter('average')->attr('value');
+        $ratings->bayesAverage = (float) $ratingsCrawler->filter('bayesaverage')->attr('value');
+
+        //These three are set for collection with stats=1 and game (with stats=1, currently always on)
+        $ratings->usersRated = $this->getIntAttribute($ratingsCrawler,'usersrated');
+        $ratings->stdDev = $this->getFloatAttribute($ratingsCrawler,'stddev');
+        $ratings->median = $this->getFloatAttribute($ratingsCrawler,'median');
+
+        //There rest are only set for game (with stats=1, currently always for game)
+        $ratings->owned = $this->getIntAttribute($ratingsCrawler, 'owned');
+        $ratings->trading = $this->getIntAttribute($ratingsCrawler, 'trading');
+        $ratings->wanting = $this->getIntAttribute($ratingsCrawler, 'wanting');
+        $ratings->wishing = $this->getIntAttribute($ratingsCrawler, 'wishing');
+        $ratings->numComments = $this->getIntAttribute($ratingsCrawler, 'numcomments');
+        $ratings->numWeights = $this->getIntAttribute($ratingsCrawler, 'numweights');
+        $ratings->averageWeight = $this->getIntAttribute($ratingsCrawler, 'averageweight');
 
         $stats->ratings = $ratings;
 
         return $stats;
+    }
+
+    private function getIntAttribute(Crawler $crawler, string $selector): ?int
+    {
+        $subCrawler = $crawler->filter($selector);
+        if ($subCrawler->count() === 0) {
+            return null;
+        }
+        return (int) $subCrawler->attr('value');
+    }
+
+    private function getFloatAttribute(Crawler $crawler, string $selector): ?float
+    {
+        $subCrawler = $crawler->filter($selector);
+        if ($subCrawler->count() === 0) {
+            return null;
+        }
+        return (float) $subCrawler->attr('value');
     }
 }
