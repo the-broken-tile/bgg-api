@@ -13,7 +13,7 @@ final class CollectionItem
     public int $collId;
     public ?int $yearPublished = null;
     public CollectionStatus $status;
-    public int $numPlays;
+    public ?int $numberOfPlays = null;
     public ?string $comment = null;
     public ?CollectionVersion $version = null;
 

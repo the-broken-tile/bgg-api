@@ -51,7 +51,7 @@ final class CollectionBuilder implements ObjectBuilderInterface
             $this->addImage($itemCrawler, $item);
             $this->addThumbnail($itemCrawler, $item);
             $this->addStatus($itemCrawler, $item);
-            $item->numPlays = (int) $itemCrawler->filter('numplays')->text();
+            $this->addNumberOfPlays($itemCrawler, $item);
             $this->addComment($itemCrawler, $item);
             $this->addVersion($itemCrawler, $item);
             $collection->items[] = $item;
@@ -124,6 +124,16 @@ final class CollectionBuilder implements ObjectBuilderInterface
             $status->attr('lastmodified'),
             $status->attr('wishlistpriority'),
         );
+    }
+
+    private function addNumberOfPlays(Crawler $crawler, CollectionItem $item): void
+    {
+        $numberOfPlays = $crawler->filter('numplays');
+        if ($numberOfPlays->count() === 0) {
+            return;
+        }
+
+        $item->numberOfPlays = (int) $numberOfPlays->text();
     }
 
     private function addComment(Crawler $itemCrawler, CollectionItem $item): void

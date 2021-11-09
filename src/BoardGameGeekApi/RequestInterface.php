@@ -23,6 +23,7 @@ interface RequestInterface
 
     public const PARAM_COLLECTION_USERNAME = 'username';
     public const PARAM_COLLECTION_VERSION = 'version';
+    public const PARAM_COLLECTION_BRIEF = 'brief';
 
     public function getType(): string;
 
