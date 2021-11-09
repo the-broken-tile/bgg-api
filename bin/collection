@@ -1,0 +1,32 @@
+#!/usr/bin/env php
+<?php
+namespace TheBrokenTile\BoardGameGeekApi;
+
+use RuntimeException;
+use Symfony\Component\HttpClient\CurlHttpClient;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\CollectionBuilder;
+use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilder;
+use TheBrokenTile\BoardGameGeekApi\Request\CollectionRequest;
+
+require dirname(__DIR__).'/vendor/autoload.php';
+
+if (count($argv) < 2) {
+    throw new RunTimeException('First argument is required');
+}
+
+$username = $argv[1];
+
+$client = new Client(
+    new CurlHttpClient(),
+    new FilesystemAdapter(),
+    new ObjectBuilder([
+        new CollectionBuilder(),
+    ])
+);
+
+var_dump($client->request(
+        (new CollectionRequest($username))
+        ->version()
+    )
+);

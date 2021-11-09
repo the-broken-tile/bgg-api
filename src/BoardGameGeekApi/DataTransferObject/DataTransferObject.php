@@ -4,10 +4,12 @@ namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
 abstract class DataTransferObject implements DataTransferObjectInterface
 {
+    use NameTrait;
+    use LinksTrait;
+
     public int $id;
     public string $thumbnail;
     public string $image;
-    public array $names = [];
     public string $description;
     public int $yearPublished;
     public int $minPlayers;
@@ -21,7 +23,5 @@ abstract class DataTransferObject implements DataTransferObjectInterface
     /** in minutes */
     public int $maxPlayTime;
     public int $minAge;
-    /** @var GameLink[] */
-    public array $links = [];
     public ?GameStatistics $stats;
 }

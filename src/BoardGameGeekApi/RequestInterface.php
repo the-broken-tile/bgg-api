@@ -7,6 +7,7 @@ interface RequestInterface
     public const TYPE_THING = 'thing';
     public const TYPE_SEARCH = 'search';
     public const TYPE_USER = 'user';
+    public const TYPE_COLLECTION = 'collection';
 
     public const PARAM_PAGE = 'page';
     public const PARAM_ID = 'id';
@@ -19,6 +20,9 @@ interface RequestInterface
     public const PARAM_USER_GUILDS = 'guilds';
     public const PARAM_USER_TOP = 'top';
     public const PARAM_USER_HOT = 'hot';
+
+    public const PARAM_COLLECTION_USERNAME = 'username';
+    public const PARAM_COLLECTION_VERSION = 'version';
 
     public function getType(): string;
 
