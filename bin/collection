@@ -27,6 +27,6 @@ $client = new Client(
 
 var_dump($client->request(
         (new CollectionRequest($username))
-        ->version()
+        ->filter(RequestInterface::PARAM_COLLECTION_FILTER_PREVIOUSLY_OWNED, true),
     )
 );
