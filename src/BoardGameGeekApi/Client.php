@@ -4,6 +4,7 @@ namespace TheBrokenTile\BoardGameGeekApi;
 
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilder;
 
@@ -47,11 +48,16 @@ final class Client implements ClientInterface
 
     private function buildCacheKey(RequestInterface $request): string
     {
-        return sprintf(
+        $key = sprintf(
             '%s|%s|%d',
             $request->getType(),
             join('|', array_values($request->getParams())),
             self::CACHE_VERSION,
         );
+
+        //Sanitize.
+        $chars = str_split( ItemInterface::RESERVED_CHARACTERS.' ', 1);
+
+        return str_replace($chars, [], $key);
     }
 }
