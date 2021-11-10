@@ -11,17 +11,17 @@ abstract class DataTransferObject implements DataTransferObjectInterface
     public string $thumbnail;
     public string $image;
     public string $description;
-    public int $yearPublished;
-    public int $minPlayers;
-    public int $maxPlayers;
+    public ?int $yearPublished;
+    public ?int $minPlayers;
+    public ?int $maxPlayers;
     /** @var GamePoll[] */
     public array $polls;
     /** in minutes */
-    public int $playingTime;
+    public ?int $playingTime;
     /** in minutes */
-    public int $minPlayTime;
+    public ?int $minPlayTime;
     /** in minutes */
-    public int $maxPlayTime;
-    public int $minAge;
-    public ?GameStatistics $stats = null;
+    public ?int $maxPlayTime;
+    public ?int $minAge;
+    public ?GameStatistics $stats;
 }

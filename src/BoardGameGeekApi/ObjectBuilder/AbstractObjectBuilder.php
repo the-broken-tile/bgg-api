@@ -54,21 +54,6 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
         return $this->crawler->filter('description')->text();
     }
 
-    protected function getYearPublished(): int
-    {
-        return (int) $this->crawler->filter('yearpublished')->attr('value');
-    }
-
-    protected function getMinPlayers(): int
-    {
-        return (int) $this->crawler->filter('minplayers')->attr('value');
-    }
-
-    protected function getMaxPlayers(): int
-    {
-        return (int) $this->crawler->filter('maxplayers')->attr('value');
-    }
-
     /** @return GamePoll[] */
     protected function getPolls(): array
     {
@@ -92,26 +77,6 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
         }
 
         return $polls;
-    }
-
-    protected function getPlayingTime(): int
-    {
-        return (int) $this->crawler->filter('playingtime')->attr('value');
-    }
-
-    protected function getMinPlayTime(): int
-    {
-        return (int) $this->crawler->filter('minplaytime')->attr('value');
-    }
-
-    protected function getMaxPlayTime(): int
-    {
-        return (int) $this->crawler->filter('maxplaytime')->attr('value');
-    }
-
-    protected function getMinAge(): int
-    {
-        return (int) $this->crawler->filter('minage')->attr('value');;
     }
 
     /** @return GameLink[] */
@@ -163,7 +128,7 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
         return $stats;
     }
 
-    private function getIntAttribute(Crawler $crawler, string $selector): ?int
+    protected function getIntAttribute(Crawler $crawler, string $selector): ?int
     {
         $subCrawler = $crawler->filter($selector);
         if ($subCrawler->count() === 0) {
