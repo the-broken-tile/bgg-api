@@ -4,6 +4,11 @@ namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
 final class GameLink
 {
+    public const TYPE_VERSION = 'boardgameversion';
+    public const TYPE_PUBLISHER = 'boardgamepublisher';
+    public const TYPE_ARTIST = 'boardgameartist';
+    public const TYPE_LANGUAGE = 'language';
+
     public int $id;
     public string $type;
     /** @var string "boardgamepublisher", "boardgamepublisher", "boardgameartist", "language", etc... */
