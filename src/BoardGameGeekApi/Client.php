@@ -59,7 +59,7 @@ final class Client implements ClientInterface
         );
 
         //Sanitize.
-        $chars = str_split( ItemInterface::RESERVED_CHARACTERS.' ', 1);
+        $chars = str_split( ItemInterface::RESERVED_CHARACTERS.' ');
 
         return str_replace($chars, [], $key);
     }
