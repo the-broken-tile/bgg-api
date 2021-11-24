@@ -28,7 +28,7 @@ final class CollectionBuilder extends AbstractObjectBuilder
     {
         $collection = new Collection();
         $crawler = new Crawler($response);
-        $collection->totalItems = (int) $crawler->filter(self::ITEM)->attr(self::TOTAL_ITEMS);
+        $collection->totalItems = (int) $crawler->filter(self::ITEMS)->attr(self::TOTAL_ITEMS);
         $collection->pubDate = $crawler->filter(self::ITEMS)->attr(self::PUBLISH_DATE);
 
         $this->addItems($crawler, $collection);
