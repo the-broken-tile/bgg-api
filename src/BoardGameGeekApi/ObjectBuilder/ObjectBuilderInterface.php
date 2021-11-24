@@ -68,7 +68,7 @@ interface ObjectBuilderInterface
 
     public const COLLECTION_STATUS = 'status';
     public const COLLECTION_OWN = 'own';
-    public const COLLECTION_PREVIOUSLY_OWN = 'prevown';
+    public const COLLECTION_PREVIOUSLY_OWN = 'prevowned';
     public const COLLECTION_FOR_TRADE = 'fortrade';
     public const COLLECTION_WANT = 'want';
     public const COLLECTION_WANT_TO_PLAY = 'wanttoplay';
