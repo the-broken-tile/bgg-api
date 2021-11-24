@@ -23,25 +23,25 @@ final class UserBuilder implements ObjectBuilderInterface
     public function build(string $response): DataTransferObjectInterface
     {
         $user = new User();
-        $crawler = (new Crawler($response))->filter('user')->eq(0);
+        $crawler = (new Crawler($response))->filter(self::USER)->eq(0);
 
-        $user->id = (int) $crawler->attr('id');
-        $user->name = $crawler->attr('name');
-        $user->firstName = $crawler->filter('firstname')->attr('value');
-        $user->lastName = $crawler->filter('lastname')->attr('value');
-        $user->avatarLink = $crawler->filter('avatarlink')->attr('value');
-        $user->yearRegistered = $crawler->filter('yearregistered')->attr('value');
-        $user->lastLogin = $crawler->filter('lastlogin')->attr('value');
-        $user->stateOrProvince = $crawler->filter('stateorprovince')->attr('value');
-        $user->country = $crawler->filter('country')->attr('value');
-        $user->webAddress = $crawler->filter('webaddress')->attr('value');
-        $user->xBoxAccount = $crawler->filter('xboxaccount')->attr('value');
-        $user->wiiAccount = $crawler->filter('wiiaccount')->attr('value');
-        $user->psnAccount = $crawler->filter('psnaccount')->attr('value');
-        $user->battleNetAccount = $crawler->filter('battlenetaccount')->attr('value');
-        $user->steamAccount = $crawler->filter('steamaccount')->attr('value');
-        $user->tradeRating = (int) $crawler->filter('traderating')->attr('value');
-        $user->marketRating = (int) $crawler->filter('marketrating')->attr('value');
+        $user->id = (int) $crawler->attr(self::ID);
+        $user->name = $crawler->attr(self::NAME);
+        $user->firstName = $crawler->filter(self::USER_FIRST_NAME)->attr(self::VALUE);
+        $user->lastName = $crawler->filter(self::USER_LAST_NAME)->attr(self::VALUE);
+        $user->avatarLink = $crawler->filter(self::USER_AVATAR_LINK)->attr(self::VALUE);
+        $user->yearRegistered = $crawler->filter(self::USER_YEAR_REGISTERED)->attr(self::VALUE);
+        $user->lastLogin = $crawler->filter(self::USER_LAST_LOGIN)->attr(self::VALUE);
+        $user->stateOrProvince = $crawler->filter(self::USER_STATE_OR_PROVINCE)->attr(self::VALUE);
+        $user->country = $crawler->filter(self::USER_COUNTRY)->attr(self::VALUE);
+        $user->webAddress = $crawler->filter(self::USER_WEB_ADDRESS)->attr(self::VALUE);
+        $user->xBoxAccount = $crawler->filter(self::USER_ACCOUNT_XBOX)->attr(self::VALUE);
+        $user->wiiAccount = $crawler->filter(self::USER_ACCOUNT_WII)->attr(self::VALUE);
+        $user->psnAccount = $crawler->filter(self::USER_ACCOUNT_PSN)->attr(self::VALUE);
+        $user->battleNetAccount = $crawler->filter(self::USER_ACCOUNT_BATTLE_NET)->attr(self::VALUE);
+        $user->steamAccount = $crawler->filter(self::USER_ACCOUNT_STEAM)->attr(self::VALUE);
+        $user->tradeRating = (int) $crawler->filter(self::USER_TRADE_RATING)->attr(self::VALUE);
+        $user->marketRating = (int) $crawler->filter(self::USER_MARKET_RATING)->attr(self::VALUE);
 
         $this->addBuddies($crawler, $user);
         $this->addGuilds($crawler, $user);
@@ -53,45 +53,48 @@ final class UserBuilder implements ObjectBuilderInterface
 
     private function addBuddies(Crawler $crawler, User $user): void
     {
-        if ($crawler->filter('buddies')->count() === 0) {
+        $buddies = $crawler->filter(self::USER_BUDDIES);
+        if ($buddies->count() === 0) {
             return;
         }
         /** @var DOMElement $buddy */
-        foreach ($crawler->filter('buddies')->filter('buddy') as $buddy) {
+        foreach ($buddies->filter(self::USER_BUDDY) as $buddy) {
             $user->buddies[] = new UserBuddy(
-                (int) $buddy->getAttribute('id'),
-                $buddy->getAttribute('name'),
+                (int) $buddy->getAttribute(self::ID),
+                $buddy->getAttribute(self::NAME),
             );
         }
     }
 
     private function addGuilds(Crawler $crawler, User $user): void
     {
-        if ($crawler->filter('guilds')->count() === 0) {
+        $guilds = $crawler->filter(self::USER_GUILDS);
+        if ($guilds->count() === 0) {
             return;
         }
 
         /** @var DOMElement $guild */
-        foreach ($crawler->filter('guilds')->filter('guild') as $guild) {
+        foreach ($guilds->filter(self::USER_GUILD) as $guild) {
             $user->guilds[] = new UserGuild(
-                (int) $guild->getAttribute('id'),
-                $guild->getAttribute('name'),
+                (int) $guild->getAttribute(self::ID),
+                $guild->getAttribute(self::NAME),
             );
         }
     }
 
     private function addTop(Crawler $crawler, User $user): void
     {
-        if ($crawler->filter('top')->count() === 0) {
+        $top = $crawler->filter(self::USER_TOP);
+        if ($top->count() === 0) {
             return;
         }
         /** @var DOMElement $item */
-        foreach ($crawler->filter('top')->filter('item') as $item) {
+        foreach ($top->filter(self::ITEM) as $item) {
             $user->top[] = new UserTopItem(
-                (int) $item->getAttribute('id'),
-                (int) $item->getAttribute('rank'),
-                $item->getAttribute('name'),
-                $item->getAttribute('type'),
+                (int) $item->getAttribute(self::ID),
+                (int) $item->getAttribute(self::RANK),
+                $item->getAttribute(self::NAME),
+                $item->getAttribute(self::VALUE),
             );
         }
     }
