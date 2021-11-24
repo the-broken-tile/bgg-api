@@ -13,23 +13,23 @@ use TheBrokenTile\BoardGameGeekApi\DataTransferObject\PollResult;
 
 abstract class AbstractObjectBuilder implements ObjectBuilderInterface
 {
-    protected string $statsKey = 'statistics';
-    protected string $ratingsKey = 'ratings';
+    protected string $statsKey = self::STATISTICS;
+    protected string $ratingsKey = self::RATINGS;
     protected Crawler $crawler;
 
     protected function getId(): int
     {
-        return (int) $this->crawler->attr('id');
+        return (int) $this->crawler->attr(self::ID);
     }
 
     protected function getThumbnail(): string
     {
-        return $this->crawler->filter('thumbnail')->text();
+        return $this->crawler->filter(self::THUMBNAIL)->text();
     }
 
     protected function getImage(): string
     {
-        return $this->crawler->filter('image')->text();
+        return $this->crawler->filter(self::IMAGE)->text();
     }
 
     /** @return GameName[] */
@@ -38,11 +38,11 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
         $names = [];
 
         /** @var DOMElement $name */
-        foreach ($this->crawler->filter('name') as $name) {
+        foreach ($this->crawler->filter(self::NAME) as $name) {
             $names[] = new GameName(
-                (int) $name->getAttribute('sortindex'),
-                $name->getAttribute('type'),
-                $name->getAttribute('value'),
+                (int) $name->getAttribute(self::SORT_INDEX),
+                $name->getAttribute(self::TYPE),
+                $name->getAttribute(self::VALUE),
             );
         }
 
@@ -51,7 +51,7 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
 
     protected function getDescription(): string
     {
-        return $this->crawler->filter('description')->text();
+        return $this->crawler->filter(self::DESCRIPTION)->text();
     }
 
     /** @return GamePoll[] */
@@ -59,18 +59,18 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
     {
         $polls = [];
         /** @var DOMElement $pollElement */
-        foreach ($this->crawler->filter('poll') as $pollElement) {
+        foreach ($this->crawler->filter(self::POLL) as $pollElement) {
 
             $poll = new GamePoll(
-                $pollElement->getAttribute('name'),
-                $pollElement->getAttribute('title'),
-                (int) $pollElement->getAttribute('totalvotes'),
+                $pollElement->getAttribute(self::NAME),
+                $pollElement->getAttribute(self::TITLE),
+                (int) $pollElement->getAttribute(self::TOTAL_VOTES),
             );
             $pollCrawler = new Crawler($pollElement);
-            foreach ($pollCrawler->filter('result') as $resultElement) {
+            foreach ($pollCrawler->filter(self::RESULT) as $resultElement) {
                 $poll->results[] = new PollResult(
-                    $resultElement->getAttribute('value'),
-                    (int) $resultElement->getAttribute('numvotes'),
+                    $resultElement->getAttribute(self::VALUE),
+                    (int) $resultElement->getAttribute(self::NUMBER_OF_VOTES),
                 );
             }
             $polls[] = $poll;
@@ -84,11 +84,11 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
     {
         $links = [];
         /** @var DOMElement $linkElement */
-        foreach ($this->crawler->filter('link') as $linkElement) {
+        foreach ($this->crawler->filter(self::LINK) as $linkElement) {
             $links[] = new GameLink(
-                (int) $linkElement->getAttribute('id'),
-                $linkElement->getAttribute('type'),
-                $linkElement->getAttribute('value'),
+                (int) $linkElement->getAttribute(self::ID),
+                $linkElement->getAttribute(self::TYPE),
+                $linkElement->getAttribute(self::VALUE),
             );
         }
 
@@ -106,22 +106,22 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
         $ratingsCrawler = $statsCrawler->filter($this->ratingsKey);
 
         //These two should always  be set
-        $ratings->average = (float) $ratingsCrawler->filter('average')->attr('value');
-        $ratings->bayesAverage = (float) $ratingsCrawler->filter('bayesaverage')->attr('value');
+        $ratings->average = (float) $ratingsCrawler->filter(self::AVERAGE)->attr(self::VALUE);
+        $ratings->bayesAverage = (float) $ratingsCrawler->filter(self::BAYESIAN_AVERAGE)->attr(self::VALUE);
 
         //These three are set for collection with stats=1 and game (with stats=1, currently always on)
-        $ratings->usersRated = $this->getIntAttribute($ratingsCrawler,'usersrated');
-        $ratings->stdDev = $this->getFloatAttribute($ratingsCrawler,'stddev');
-        $ratings->median = $this->getFloatAttribute($ratingsCrawler,'median');
+        $ratings->usersRated = $this->getIntAttribute($ratingsCrawler,self::USERS_RATED);
+        $ratings->stdDev = $this->getFloatAttribute($ratingsCrawler,self::STANDARD_DEVIATION);
+        $ratings->median = $this->getFloatAttribute($ratingsCrawler,self::MEDIAN);
 
         //There rest are only set for game (with stats=1, currently always for game)
-        $ratings->owned = $this->getIntAttribute($ratingsCrawler, 'owned');
-        $ratings->trading = $this->getIntAttribute($ratingsCrawler, 'trading');
-        $ratings->wanting = $this->getIntAttribute($ratingsCrawler, 'wanting');
-        $ratings->wishing = $this->getIntAttribute($ratingsCrawler, 'wishing');
-        $ratings->numComments = $this->getIntAttribute($ratingsCrawler, 'numcomments');
-        $ratings->numWeights = $this->getIntAttribute($ratingsCrawler, 'numweights');
-        $ratings->averageWeight = $this->getIntAttribute($ratingsCrawler, 'averageweight');
+        $ratings->owned = $this->getIntAttribute($ratingsCrawler, self::OWNED);
+        $ratings->trading = $this->getIntAttribute($ratingsCrawler, self::TRADING);
+        $ratings->wanting = $this->getIntAttribute($ratingsCrawler, self::WANTING);
+        $ratings->wishing = $this->getIntAttribute($ratingsCrawler, self::WISHING);
+        $ratings->numComments = $this->getIntAttribute($ratingsCrawler, self::NUMBER_OF_COMMENTS);
+        $ratings->numWeights = $this->getIntAttribute($ratingsCrawler, self::NUMBER_OF_WEIGHTS);
+        $ratings->averageWeight = $this->getIntAttribute($ratingsCrawler, self::AVERAGE_WEIGHT);
 
         $stats->ratings = $ratings;
 
@@ -134,7 +134,7 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
         if ($subCrawler->count() === 0) {
             return null;
         }
-        return (int) $subCrawler->attr('value');
+        return (int) $subCrawler->attr(self::VALUE);
     }
 
     private function getFloatAttribute(Crawler $crawler, string $selector): ?float
@@ -143,6 +143,6 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
         if ($subCrawler->count() === 0) {
             return null;
         }
-        return (float) $subCrawler->attr('value');
+        return (float) $subCrawler->attr(self::VALUE);
     }
 }

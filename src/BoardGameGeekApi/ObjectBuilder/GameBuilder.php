@@ -21,7 +21,7 @@ final class GameBuilder extends AbstractObjectBuilder
      */
     public function build(string $response): DataTransferObject
     {
-        $this->crawler = (new Crawler($response))->filter('item')->eq(0);
+        $this->crawler = (new Crawler($response))->filter(self::ITEM)->eq(0);
 
         $object = $this->createObject($response);
 
@@ -30,14 +30,14 @@ final class GameBuilder extends AbstractObjectBuilder
         $object->image = $this->getImage();
         $object->names = $this->getNames();
         $object->description = $this->getDescription();
-        $object->yearPublished = $this->getIntAttribute($this->crawler, 'yearpublished');
-        $object->minPlayers = $this->getIntAttribute($this->crawler, 'minplayers');
-        $object->maxPlayers = $this->getIntAttribute($this->crawler, 'maxplayers');
+        $object->yearPublished = $this->getIntAttribute($this->crawler, self::YEAR_PUBLISHED);
+        $object->minPlayers = $this->getIntAttribute($this->crawler, self::MIN_PLAYERS);
+        $object->maxPlayers = $this->getIntAttribute($this->crawler, self::MAX_PLAYERS);
         $object->polls = $this->getPolls();
-        $object->playingTime = $this->getIntAttribute($this->crawler, 'playingtime');
-        $object->minPlayTime = $this->getIntAttribute($this->crawler, 'minplaytime');
-        $object->maxPlayTime = $this->getIntAttribute($this->crawler, 'maxplaytime');
-        $object->minAge = $this->getIntAttribute($this->crawler, 'minage');
+        $object->playingTime = $this->getIntAttribute($this->crawler, self::PLAYING_TIME);
+        $object->minPlayTime = $this->getIntAttribute($this->crawler, self::MIN_PLAY_TIME);
+        $object->maxPlayTime = $this->getIntAttribute($this->crawler, self::MAX_PLAY_TIME);
+        $object->minAge = $this->getIntAttribute($this->crawler, self::MIN_AGE);
         $object->links = $this->getLinks();
         $object->stats = $this->getStats($this->crawler);
 

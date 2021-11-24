@@ -20,9 +20,9 @@ final class SearchResultBuilder extends AbstractObjectBuilder
     public function build(string $response): SearchResults
     {
         $crawler = new Crawler($response);
-        $items = $crawler->filter('items')->eq(0);
+        $items = $crawler->filter(self::ITEMS)->eq(0);
         $results = new SearchResults();
-        $results->total = (int) $items->attr('total');
+        $results->total = (int) $items->attr(self::TOTAL);
         $results->items = $this->getItems($crawler);
 
         return $results;
@@ -33,20 +33,20 @@ final class SearchResultBuilder extends AbstractObjectBuilder
     {
         $items = [];
         /** @var DOMElement $itemElement */
-        foreach ($crawler->filter('item') as $itemElement) {
+        foreach ($crawler->filter(self::ITEM) as $itemElement) {
             $itemCrawler = new Crawler($itemElement);
-            $name = $itemCrawler->filter('name')->eq(0);
-            $yearPublished = $itemCrawler->filter('yearpublished');
+            $name = $itemCrawler->filter(self::NAME)->eq(0);
+            $yearPublished = $itemCrawler->filter(self::YEAR_PUBLISHED);
 
             $items[] = new SearchItem(
-                (int) $itemElement->getAttribute('id'),
-                $itemElement->getAttribute('type'),
+                (int) $itemElement->getAttribute(self::ID),
+                $itemElement->getAttribute(self::TYPE),
                 new GameName(
                     1,
-                    $name->attr('type'),
-                    $name->attr('value'),
+                    $name->attr(self::TYPE),
+                    $name->attr(self::VALUE),
                 ),
-                $yearPublished->count() ? (int) $yearPublished->attr('value'): null,
+                $yearPublished->count() ? (int) $yearPublished->attr(self::VALUE): null,
             );
         }
 
