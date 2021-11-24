@@ -17,7 +17,6 @@ final class GameBuilder extends AbstractObjectBuilder
     }
 
     /**
-     * @param string $response
      * @return Game|Expansion
      */
     public function build(string $response): DataTransferObject
@@ -31,14 +30,14 @@ final class GameBuilder extends AbstractObjectBuilder
         $object->image = $this->getImage();
         $object->names = $this->getNames();
         $object->description = $this->getDescription();
-        $object->yearPublished = $this->getYearPublished();
-        $object->minPlayers = $this->getMinPlayers();
-        $object->maxPlayers = $this->getMaxPlayers();
+        $object->yearPublished = $this->getIntAttribute($this->crawler, 'yearpublished');
+        $object->minPlayers = $this->getIntAttribute($this->crawler, 'minplayers');
+        $object->maxPlayers = $this->getIntAttribute($this->crawler, 'maxplayers');
         $object->polls = $this->getPolls();
-        $object->playingTime = $this->getPlayingTime();
-        $object->minPlayTime = $this->getMinPlayTime();
-        $object->maxPlayTime = $this->getMaxPlayTime();
-        $object->minAge = $this->getMinAge();
+        $object->playingTime = $this->getIntAttribute($this->crawler, 'playingtime');
+        $object->minPlayTime = $this->getIntAttribute($this->crawler, 'minplaytime');
+        $object->maxPlayTime = $this->getIntAttribute($this->crawler, 'maxplaytime');
+        $object->minAge = $this->getIntAttribute($this->crawler, 'minage');
         $object->links = $this->getLinks();
         $object->stats = $this->getStats($this->crawler);
 
