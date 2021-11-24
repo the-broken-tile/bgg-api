@@ -101,6 +101,7 @@ interface ObjectBuilderInterface
     public const USER_GUILDS = 'guilds';
     public const USER_GUILD = 'guild';
     public const USER_TOP = 'top';
+    public const USER_HOT = 'hot';
 
     public function supports(RequestInterface $request): bool;
 
