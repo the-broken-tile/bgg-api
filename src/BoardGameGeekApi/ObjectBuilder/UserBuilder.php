@@ -8,6 +8,7 @@ use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserBuddy;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterface;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\User;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserGuild;
+use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserHotItem;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserTopItem;
 use TheBrokenTile\BoardGameGeekApi\Request\UserRequest;
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
@@ -101,6 +102,19 @@ final class UserBuilder implements ObjectBuilderInterface
 
     private function addHot(Crawler $crawler, User $user): void
     {
-        //@todo when I find a real example of the structure.
+        $hot = $crawler->filter(self::USER_HOT);
+        if ($hot->count() === 0) {
+            return;
+        }
+
+        /** @var DOMElement $item */
+        foreach ($hot->filter(self::ITEM) as $item) {
+            $user->top[] = new UserHotItem(
+                (int) $item->getAttribute(self::ID),
+                (int) $item->getAttribute(self::RANK),
+                $item->getAttribute(self::NAME),
+                $item->getAttribute(self::VALUE),
+            );
+        }
     }
 }

@@ -2,7 +2,6 @@
 
 namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
-final class UserHotItem
+final class UserHotItem extends AbstractUserItem
 {
-    //@todo when I find a real example of the structure.
 }
