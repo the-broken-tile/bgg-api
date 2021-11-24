@@ -109,7 +109,7 @@ final class UserBuilder implements ObjectBuilderInterface
 
         /** @var DOMElement $item */
         foreach ($hot->filter(self::ITEM) as $item) {
-            $user->top[] = new UserHotItem(
+            $user->hot[] = new UserHotItem(
                 (int) $item->getAttribute(self::ID),
                 (int) $item->getAttribute(self::RANK),
                 $item->getAttribute(self::NAME),
