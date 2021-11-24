@@ -31,7 +31,7 @@ final class UserBuilder implements ObjectBuilderInterface
         $user->firstName = $crawler->filter(self::USER_FIRST_NAME)->attr(self::VALUE);
         $user->lastName = $crawler->filter(self::USER_LAST_NAME)->attr(self::VALUE);
         $user->avatarLink = $crawler->filter(self::USER_AVATAR_LINK)->attr(self::VALUE);
-        $user->yearRegistered = $crawler->filter(self::USER_YEAR_REGISTERED)->attr(self::VALUE);
+        $user->yearRegistered = (int) $crawler->filter(self::USER_YEAR_REGISTERED)->attr(self::VALUE);
         $user->lastLogin = $crawler->filter(self::USER_LAST_LOGIN)->attr(self::VALUE);
         $user->stateOrProvince = $crawler->filter(self::USER_STATE_OR_PROVINCE)->attr(self::VALUE);
         $user->country = $crawler->filter(self::USER_COUNTRY)->attr(self::VALUE);

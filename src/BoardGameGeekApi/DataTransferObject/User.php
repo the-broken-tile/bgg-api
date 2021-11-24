@@ -9,7 +9,7 @@ final class User implements DataTransferObjectInterface
     public string $firstName;
     public string $lastName;
     public string $avatarLink;
-    public string $yearRegistered;
+    public int $yearRegistered;
     public string $lastLogin;
     public string $stateOrProvince;
     public string $country;
