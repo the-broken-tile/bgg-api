@@ -6,7 +6,7 @@ use DomainException;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterface;
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
-final class ObjectBuilder
+final class ObjectBuilder implements ObjectBuilderManagerInterface
 {
     /** @var iterable<ObjectBuilderInterface> */
     private iterable $builders;
