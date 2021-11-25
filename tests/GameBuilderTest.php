@@ -6,6 +6,8 @@ use TheBrokenTile\BoardGameGeekApi\DataTransferObject\Game;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameLink;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameName;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GamePoll;
+use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameRatings;
+use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameStatistics;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\GameBuilder;
 use PHPUnit\Framework\TestCase;
 use TheBrokenTile\BoardGameGeekApi\Request\GameRequest;
@@ -29,51 +31,165 @@ final class GameBuilderTest extends TestCase
 
     /**
      * @covers ::build
+     * @dataProvider buildDataProvider
      */
-    public function testBuild(): void
+    public function testBuild(
+        int             $expectedId,
+        string          $expectedImage,
+        string          $expectedThumbnail,
+        string          $expectedDescriptionStart,
+        int             $expectedYearPublished,
+        int             $expectedMinPlayers,
+        int             $expectedMaxPlayers,
+        int             $expectedPlayingTime,
+        int             $expectedMinPlayTime,
+        int             $expectedMaxPlayTime,
+        int             $expectedMinAge,
+        int             $expectedNamesCount,
+        int             $nameIndex,
+        GameName        $expectedName,
+        int             $expectedLinksCount,
+        int             $linkIndex,
+        GameLink        $expectedGameLink,
+        int             $expectedPollsCount,
+        string          $expectedPollName,
+        string          $expectedPollTitle,
+        int             $expectedPollVotes,
+        int             $expectedPollResultsCount,
+        ?GameStatistics $expectedStats,
+        string          $fixture
+    ): void
     {
         $builder = new GameBuilder();
-        $response = file_get_contents(__DIR__.'/fixtures/game_no_stats.xml');
+        $response = file_get_contents(__DIR__ . $fixture);
 
         $game = $builder->build($response);
         self::assertInstanceOf(Game::class, $game);
-        self::assertSame(822, $game->id);
-        self::assertSame('https://cf.geekdo-images.com/Z3upN53-fsVPUDimN9SpOA__original/img/9LEvU4EbbBrJB36YgWQXeXQYwjo=/0x0/filters:format(jpeg)/pic2337577.jpg', $game->image);
-        self::assertSame('https://cf.geekdo-images.com/Z3upN53-fsVPUDimN9SpOA__thumb/img/_C5pWATlaq3uS8u7IlFb0WMi_ak=/fit-in/200x150/filters:strip_icc()/pic2337577.jpg', $game->thumbnail);
-        self::assertStringStartsWith('Carcassonne is a tile-placement game in which the players draw and place a tile', $game->description);
-        self::assertSame(2000, $game->yearPublished);
-        self::assertSame(2, $game->minPlayers);
-        self::assertSame(5, $game->maxPlayers);
-        self::assertSame(45, $game->playingTime);
-        self::assertSame(30, $game->minPlayTime);
-        self::assertSame(45, $game->maxPlayTime);
-        self::assertSame(7, $game->minAge);
+        self::assertSame($expectedId, $game->id);
+        self::assertSame($expectedImage, $game->image);
+        self::assertSame($expectedThumbnail, $game->thumbnail);
+        self::assertStringStartsWith($expectedDescriptionStart, $game->description);
+        self::assertSame($expectedYearPublished, $game->yearPublished);
+        self::assertSame($expectedMinPlayers, $game->minPlayers);
+        self::assertSame($expectedMaxPlayers, $game->maxPlayers);
+        self::assertSame($expectedPlayingTime, $game->playingTime);
+        self::assertSame($expectedMinPlayTime, $game->minPlayTime);
+        self::assertSame($expectedMaxPlayTime, $game->maxPlayTime);
+        self::assertSame($expectedMinAge, $game->minAge);
 
-        self::assertCount(17, $game->names);
-        $name = current($game->names);
-        self::assertInstanceOf(GameName::class, $name);
-        self::assertSame(GameName::TYPE_PRIMARY, $name->type);
-        self::assertSame(1, $name->sortIndex);
-        self::assertSame('Carcassonne', $name->value);
+        self::assertCount($expectedNamesCount, $game->names);
 
-        self::assertCount(243, $game->links);
-        $link = current($game->links);
-        self::assertInstanceOf(GameLink::class, $link);
-        self::assertSame(GameLink::TYPE_CATEGORY, $link->type);
-        self::assertSame(1029, $link->id);
-        self::assertSame('City Building', $link->value);
+        $name = $game->names[$nameIndex];
+        self::assertEquals($expectedName, $name);
 
-        self::assertCount(3, $game->polls);
-        $poll = current($game->polls);
-        self::assertInstanceOf(GamePoll::class, $poll);
-        self::assertSame('suggested_numplayers', $poll->name);
-        self::assertSame('User Suggested Number of Players', $poll->title);
-        self::assertSame(2153, $poll->totalVotes);
+        self::assertCount($expectedLinksCount, $game->links);
+        $link = $game->links[$linkIndex];
+        self::assertEquals($expectedGameLink, $link);
 
         // @todo rework poll results, they have different structure, current implementation doesn't support both.
-        self::assertCount(18, $poll->results);
+        self::assertCount($expectedPollsCount, $game->polls);
+        $poll = current($game->polls);
+        self::assertInstanceOf(GamePoll::class, $poll);
+        self::assertSame($expectedPollName, $poll->name);
+        self::assertSame($expectedPollTitle, $poll->title);
+        self::assertSame($expectedPollVotes, $poll->totalVotes);
+        self::assertCount($expectedPollResultsCount, $poll->results);
 
-        // @todo add test with stats.
-        self::assertNull($game->stats);
+        self::assertEquals($expectedStats, $game->stats);
+    }
+
+    /**
+     * @return array<string, mixed[]>
+     */
+    public function buildDataProvider(): array
+    {
+        $base = [
+            'expectedId' => 822,
+            'expectedImage' => 'https://cf.geekdo-images.com/Z3upN53-fsVPUDimN9SpOA__original/img/9LEvU4EbbBrJB36YgWQXeXQYwjo=/0x0/filters:format(jpeg)/pic2337577.jpg',
+            'expectedThumbnail' => 'https://cf.geekdo-images.com/Z3upN53-fsVPUDimN9SpOA__thumb/img/_C5pWATlaq3uS8u7IlFb0WMi_ak=/fit-in/200x150/filters:strip_icc()/pic2337577.jpg',
+            'expectedDescriptionStart' => 'Carcassonne is a tile-placement game in which the players draw and place a tile',
+            'expectedYearPublished' => 2000,
+            'expectedMinPlayers' => 2,
+            'expectedMaxPlayers' => 5,
+            'expectedPlayingTime' => 45,
+            'expectedMinPlayTime' => 30,
+            'expectedMaxPlayTime' => 45,
+            'expectedMinAge' => 7,
+            'expectedNamesCount' => 17,
+            'nameIndex' => null,//placeholder
+            'expectedName' => null,//placeholder
+            'expectedLinksCount' => 243,
+            'linkIndex' => null,//placeholder
+            'expectedLink' => null,//placeholder
+            'expectedPollsCount' => 3,
+            'expectedPollName' => 'suggested_numplayers',
+            'expectedPollTitle' => 'User Suggested Number of Players',
+            'expectedPollVotes' => 2154,
+            'expectedPollResultsCount' => 18,
+        ];
+
+        return [
+            'stats' => array_merge($base, [
+                'expectedStats' => $this->buildStats(
+                    107363,
+                    7.41855,
+                    158733,
+                    1696,
+                    577,
+                    7250,
+                    19100,
+                    7657,
+                    1.9071,
+                    7.30909,
+                    1.30574,
+                    0.0
+                ),
+                'nameIndex' => 1,
+                'expectedName' => new GameName(1, GameName::TYPE_ALTERNATE, 'Carcassonne Jubilee Edition'),
+                'linkIndex' => 0,
+                'expectedLink' => new GameLink(1029, GameLink::TYPE_CATEGORY, 'City Building'),
+                'fixture' => '/fixtures/game.xml',
+            ]),
+            'no stats' => array_merge($base, [
+                'expectedStats' => null,
+                'nameIndex' => 0,
+                'expectedName' => new GameName(1, GameName::TYPE_PRIMARY, 'Carcassonne'),
+                'linkIndex' => 203,
+                'expectedLink' => new GameLink(398, GameLink::TYPE_DESIGNER, 'Klaus-Jürgen Wrede'),
+                'fixture' => '/fixtures/game_no_stats.xml',
+            ]),
+        ];
+    }
+
+    private function buildStats(
+        int   $usersRated,
+        float $average,
+        int   $owned,
+        int   $trading,
+        int   $wanting,
+        int   $wishing,
+        int   $numComments,
+        int   $numWeights,
+        float $averageWeight,
+        float $bayesAverage,
+        float $stdDev,
+        float $median
+    ): GameStatistics
+    {
+        $stats = new GameStatistics();
+        $stats->ratings->usersRated = $usersRated;
+        $stats->ratings->average = $average;
+        $stats->ratings->owned = $owned;
+        $stats->ratings->trading = $trading;
+        $stats->ratings->wanting = $wanting;
+        $stats->ratings->wishing = $wishing;
+        $stats->ratings->numComments = $numComments;
+        $stats->ratings->numWeights = $numWeights;
+        $stats->ratings->averageWeight = $averageWeight;
+        $stats->ratings->bayesAverage = $bayesAverage;
+        $stats->ratings->stdDev = $stdDev;
+        $stats->ratings->median = $median;
+
+        return $stats;
     }
 }

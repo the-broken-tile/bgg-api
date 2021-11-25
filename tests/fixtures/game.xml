@@ -120,12 +120,12 @@
         <poll name="language_dependence" title="Language Dependence" totalvotes="470">
 
             <results>
-                <result level="1171" value="No necessary in-game text" numvotes="461"/>
-                <result level="1172" value="Some necessary text - easily memorized or small crib sheet" numvotes="7"/>
-                <result level="1173" value="Moderate in-game text - needs crib sheet or paste ups" numvotes="1"/>
-                <result level="1174" value="Extensive use of text - massive conversion needed to be playable"
+                <result level="151" value="No necessary in-game text" numvotes="461"/>
+                <result level="152" value="Some necessary text - easily memorized or small crib sheet" numvotes="7"/>
+                <result level="153" value="Moderate in-game text - needs crib sheet or paste ups" numvotes="1"/>
+                <result level="154" value="Extensive use of text - massive conversion needed to be playable"
                         numvotes="0"/>
-                <result level="1175" value="Unplayable in another language" numvotes="1"/>
+                <result level="155" value="Unplayable in another language" numvotes="1"/>
             </results>
         </poll>
 
@@ -862,6 +862,32 @@
 
 
         <link type="boardgamepublisher" id="538" value="Z-Man Games"/>
+
+
+        <statistics page="1">
+            <ratings>
+                <usersrated value="107363"/>
+                <average value="7.41855"/>
+                <bayesaverage value="7.30909"/>
+
+                <ranks>
+                    <rank type="subtype" id="1" name="boardgame" friendlyname="Board Game Rank" value="185"
+                          bayesaverage="7.30909"/>
+                    <rank type="family" id="5499" name="familygames" friendlyname="Family Game Rank" value="40"
+                          bayesaverage="7.30109"/>
+                </ranks>
+
+                <stddev value="1.30574"/>
+                <median value="0"/>
+                <owned value="158733"/>
+                <trading value="1696"/>
+                <wanting value="577"/>
+                <wishing value="7250"/>
+                <numcomments value="19100"/>
+                <numweights value="7657"/>
+                <averageweight value="1.9071"/>
+            </ratings>
+        </statistics>
 
 
     </item>

@@ -7,6 +7,7 @@ use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 final class GameRequest implements RequestInterface
 {
     private int $id;
+    private ?bool $stats = null;
 
     public function __construct(int $id)
     {
@@ -22,7 +23,14 @@ final class GameRequest implements RequestInterface
     {
         return [
             self::PARAM_ID => $this->id,
-            self::PARAM_STATS => 1,
+            self::PARAM_STATS => $this->stats,
         ];
+    }
+
+    public function stats(): self
+    {
+        $this->stats = true;
+
+        return $this;
     }
 }
