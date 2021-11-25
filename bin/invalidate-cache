@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+namespace TheBrokenTile\BoardGameGeekApi;
+
+use Symfony\Component\Cache\Adapter\TagAwareAdapter;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+
+require dirname(__DIR__).'/vendor/autoload.php';
+
+$tag = $argv[1];
+$cache = new TagAwareAdapter(
+    new FilesystemAdapter(),
+);
+
+$result = $cache->invalidateTags([sprintf('%s.%s', Client::CACHE_TAG_PREFIX, $tag)]);
+
+echo sprintf('Cache tag "%s" %s invalidated.', $tag, $result ? 'successfully' : 'not');
