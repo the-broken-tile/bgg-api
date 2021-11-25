@@ -1,0 +1,15 @@
+name: PHPStan
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+      - name: Run test suite
+        run: composer phpstan
