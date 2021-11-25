@@ -104,23 +104,23 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
         $stats = new GameStatistics();
         $ratingsCrawler = $statsCrawler->filter($this->ratingsKey);
 
-        //These two should always  be set
+        //These two should always be set.
         $stats->ratings->average = (float) $ratingsCrawler->filter(self::AVERAGE)->attr(self::VALUE);
         $stats->ratings->bayesAverage = (float) $ratingsCrawler->filter(self::BAYESIAN_AVERAGE)->attr(self::VALUE);
 
-        //These three are set for collection with stats=1 and game (with stats=1, currently always on)
+        //These three are set for collection and game with stats=1.
         $stats->ratings->usersRated = $this->getIntAttribute($ratingsCrawler,self::USERS_RATED);
         $stats->ratings->stdDev = $this->getFloatAttribute($ratingsCrawler,self::STANDARD_DEVIATION);
         $stats->ratings->median = $this->getFloatAttribute($ratingsCrawler,self::MEDIAN);
 
-        //There rest are only set for game (with stats=1, currently always for game)
+        //There rest are only set for game with stats=1.
         $stats->ratings->owned = $this->getIntAttribute($ratingsCrawler, self::OWNED);
         $stats->ratings->trading = $this->getIntAttribute($ratingsCrawler, self::TRADING);
         $stats->ratings->wanting = $this->getIntAttribute($ratingsCrawler, self::WANTING);
         $stats->ratings->wishing = $this->getIntAttribute($ratingsCrawler, self::WISHING);
         $stats->ratings->numComments = $this->getIntAttribute($ratingsCrawler, self::NUMBER_OF_COMMENTS);
         $stats->ratings->numWeights = $this->getIntAttribute($ratingsCrawler, self::NUMBER_OF_WEIGHTS);
-        $stats->ratings->averageWeight = $this->getIntAttribute($ratingsCrawler, self::AVERAGE_WEIGHT);
+        $stats->ratings->averageWeight = $this->getFloatAttribute($ratingsCrawler, self::AVERAGE_WEIGHT);
 
         return $stats;
     }

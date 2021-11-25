@@ -9,6 +9,7 @@ final class GameLink
     public const TYPE_ARTIST = 'boardgameartist';
     public const TYPE_LANGUAGE = 'language';
     public const TYPE_CATEGORY = 'boardgamecategory';
+    public const TYPE_DESIGNER = 'boardgamedesigner';
 
     public int $id;
     public string $type;
