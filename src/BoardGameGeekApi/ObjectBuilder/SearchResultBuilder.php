@@ -37,6 +37,8 @@ final class SearchResultBuilder extends AbstractObjectBuilder
             $itemCrawler = new Crawler($itemElement);
             $name = $itemCrawler->filter(self::NAME)->eq(0);
             $yearPublished = $itemCrawler->filter(self::YEAR_PUBLISHED);
+            $value = $name->attr(self::VALUE);
+            assert(is_string($value));
 
             $items[] = new SearchItem(
                 (int) $itemElement->getAttribute(self::ID),
@@ -44,7 +46,7 @@ final class SearchResultBuilder extends AbstractObjectBuilder
                 new GameName(
                     1,
                     $name->attr(self::TYPE),
-                    $name->attr(self::VALUE),
+                    $value,
                 ),
                 $yearPublished->count() ? (int) $yearPublished->attr(self::VALUE): null,
             );

@@ -59,6 +59,7 @@ final class CollectionBuilderTest extends TestCase
     {
         $collectionBuilder = new CollectionBuilder();
         $response = file_get_contents(__DIR__ . $fixture);
+        assert(is_string($response));
 
         $collection = $collectionBuilder->build($response);
         self::assertInstanceOf(Collection::class, $collection);
@@ -258,6 +259,9 @@ final class CollectionBuilderTest extends TestCase
         ];
     }
 
+    /**
+     * @param GameRank[] $ranks
+     */
     private function buildStatistics(
         ?int   $usersRated,
         float  $average,

@@ -33,6 +33,7 @@ final class UserBuilderTest extends TestCase
     {
         $userBuilder = new UserBuilder();
         $response = file_get_contents(__DIR__.'/fixtures/user.xml');
+        assert(is_string($response));
 
         $user = $userBuilder->build($response);
         self::assertInstanceOf(User::class, $user);
@@ -57,7 +58,7 @@ final class UserBuilderTest extends TestCase
         //Buddies.
         self::assertCount(9, $user->buddies);
         $buddy = current($user->buddies);
-        self::assertInstanceOf(UserBuddy::class, $buddy);
+        assert($buddy instanceof UserBuddy);
         self::assertSame(1201816, $buddy->id);
         self::assertSame('aymaliev', $buddy->name);
 

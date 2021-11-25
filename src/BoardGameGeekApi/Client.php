@@ -2,7 +2,6 @@
 
 namespace TheBrokenTile\BoardGameGeekApi;
 
-use Psr\Cache\InvalidArgumentException;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -30,9 +29,6 @@ final class Client implements ClientInterface
         $this->urlGenerator = $urlGenerator;
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     public function request(RequestInterface $request): ResponseInterface
     {
         $url = $this->urlGenerator->generate($request);
@@ -40,6 +36,7 @@ final class Client implements ClientInterface
         $response = $this->cache->get($this->buildCacheKey($request), function (/*ItemInterface $item*/) use ($url): string {
             return $this->client->request(self::METHOD, $url)->getContent();
         });
+        assert(is_string($response));
 
         $thing = $this->builder->build($request, $response);
 

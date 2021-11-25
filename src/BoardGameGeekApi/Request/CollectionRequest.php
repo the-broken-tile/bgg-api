@@ -10,6 +10,7 @@ final class CollectionRequest implements RequestInterface
     private ?bool $version = null;
     private ?bool $brief = null;
     private ?bool $stats = null;
+    /** @var array<string, bool|string|int> */
     private array $filters = [];
 
     public function __construct(string $username)
@@ -57,6 +58,9 @@ final class CollectionRequest implements RequestInterface
         return $this;
     }
 
+    /**
+     * @param string|bool|int $value
+     */
     public function filter(string $name, $value): self
     {
         $this->filters[$name] = $value;
