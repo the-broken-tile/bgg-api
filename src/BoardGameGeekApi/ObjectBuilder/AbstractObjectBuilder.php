@@ -7,6 +7,7 @@ use Symfony\Component\DomCrawler\Crawler;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameLink;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameName;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GamePoll;
+use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameRank;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameRatings;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameStatistics;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\PollResult;
@@ -121,6 +122,7 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
         $stats->ratings->numComments = $this->getIntAttribute($ratingsCrawler, self::NUMBER_OF_COMMENTS);
         $stats->ratings->numWeights = $this->getIntAttribute($ratingsCrawler, self::NUMBER_OF_WEIGHTS);
         $stats->ratings->averageWeight = $this->getFloatAttribute($ratingsCrawler, self::AVERAGE_WEIGHT);
+        $this->addRanks($stats->ratings, $ratingsCrawler);
 
         return $stats;
     }
@@ -141,5 +143,25 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
             return null;
         }
         return (float) $subCrawler->attr(self::VALUE);
+    }
+
+    private function addRanks(GameRatings $ratings, Crawler $ratingsCrawler): void
+    {
+        $ranks = $ratingsCrawler->filter(self::RANKS);
+        if ($ranks->count() === 0) {
+            return;
+        }
+
+        /** @var DOMElement $rank */
+        foreach ($ranks->filter(self::RANK) as $rank) {
+            $ratings->ranks[] = new GameRank(
+                (int) $rank->getAttribute(self::ID),
+                $rank->getAttribute(self::RANK_NAME),
+                $rank->getAttribute(self::RANK_TYPE),
+                $rank->getAttribute(self::RANK_FRIENDLY_NAME),
+                (int) $rank->getAttribute(self::VALUE),
+                (float) $rank->getAttribute(self::RANK_BAYESIAN_AVERAGE),
+            );
+        }
     }
 }

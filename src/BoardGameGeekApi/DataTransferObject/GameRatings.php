@@ -5,6 +5,13 @@ namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 final class GameRatings
 {
     /**
+     * Will be set for game wil stats=1
+     * Will be set for collection with stats=1 and brief=0
+     * @var GameRank[]
+     */
+    public array $ranks = [];
+
+    /**
      * Will be set for collection with stats=1
      * Won't be set for collection with stats=1 and brief=1
      */
