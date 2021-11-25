@@ -3,6 +3,7 @@
 namespace TheBrokenTile\BoardGameGeekApi;
 
 use RuntimeException;
+use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilder;
@@ -19,7 +20,9 @@ $username = $argv[1];
 
 $client = new Client(
     new CurlHttpClient(),
-    new FilesystemAdapter(),
+    new TagAwareAdapter(
+        new FilesystemAdapter(),
+    ),
     new ObjectBuilder([
         new UserBuilder(),
     ]),
