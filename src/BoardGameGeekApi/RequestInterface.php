@@ -108,6 +108,6 @@ interface RequestInterface
 
     public function getType(): string;
 
-    /** @return array<string, mixed> */
+    /** @return array<string, bool|float|int|string|null> */
     public function getParams(): array;
 }
