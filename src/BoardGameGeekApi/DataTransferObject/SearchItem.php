@@ -2,8 +2,12 @@
 
 namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
+use TheBrokenTile\BoardGameGeekApi\RequestInterface;
+
 final class SearchItem
 {
+    public const TYPE_BOARD_GAME = RequestInterface::PARAM_BOARD_GAME;
+
     public int $id;
     public string $type;
     public GameName $name;
