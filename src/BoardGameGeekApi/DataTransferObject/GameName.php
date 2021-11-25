@@ -4,8 +4,10 @@ namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
 final class GameName
 {
+    public const TYPE_PRIMARY = 'primary';
+    public const TYPE_ALTERNATE = 'alternate';
+
     public int $sortIndex;
-    /** @var string|null "primary" or "alternate" */
     public ?string $type = null;
     public string $value;
 

@@ -21,12 +21,15 @@ interface RequestInterface
     public const PARAM_STATS = 'stats';
     public const PARAM_QUERY = 'query';
     public const PARAM_EXACT = 'exact';
+    public const PARAM_TYPE = 'type';
 
     public const PARAM_USER_NAME = 'name';
     public const PARAM_USER_BUDDIES = 'buddies';
     public const PARAM_USER_GUILDS = 'guilds';
     public const PARAM_USER_TOP = 'top';
     public const PARAM_USER_HOT = 'hot';
+
+    public const PARAM_BOARD_GAME = 'boardgame';
 
     public const PARAM_COLLECTION_USERNAME = 'username';
     public const PARAM_COLLECTION_VERSION = 'version';

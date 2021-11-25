@@ -4,6 +4,8 @@ namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
 final class CollectionVersion
 {
+    public const TYPE_VERSION = 'boardgameversion';
+
     use ImageTrait;
     use NameTrait;
     use LinksTrait;

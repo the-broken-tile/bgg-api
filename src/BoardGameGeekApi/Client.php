@@ -6,7 +6,7 @@ use Psr\Cache\InvalidArgumentException;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilder;
+use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilderManagerInterface;
 
 final class Client implements ClientInterface
 {
@@ -16,10 +16,13 @@ final class Client implements ClientInterface
 
     private HttpClientInterface $client;
     private CacheInterface $cache;
-    private ObjectBuilder $builder;
+    private ObjectBuilderManagerInterface $builder;
 
-    public function __construct(HttpClientInterface $client, CacheInterface $cache, ObjectBuilder $gameBuilder)
-    {
+    public function __construct(
+        HttpClientInterface $client,
+        CacheInterface $cache,
+        ObjectBuilderManagerInterface $gameBuilder
+    ) {
         $this->client = $client;
         $this->cache = $cache;
         $this->builder = $gameBuilder;
@@ -56,7 +59,7 @@ final class Client implements ClientInterface
         );
 
         //Sanitize.
-        $chars = str_split( ItemInterface::RESERVED_CHARACTERS.' ', 1);
+        $chars = str_split( ItemInterface::RESERVED_CHARACTERS.' ');
 
         return str_replace($chars, [], $key);
     }

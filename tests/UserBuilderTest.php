@@ -7,6 +7,7 @@ use TheBrokenTile\BoardGameGeekApi\DataTransferObject\User;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserBuddy;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserHotItem;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\UserBuilder;
+use TheBrokenTile\BoardGameGeekApi\Request\SearchRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\UserRequest;
 
 /**
@@ -21,6 +22,8 @@ final class UserBuilderTest extends TestCase
     {
         $userBuilder = new UserBuilder();
         self::assertTrue($userBuilder->supports(new UserRequest('test')));
+
+        self::assertFalse($userBuilder->supports(new SearchRequest('test')));
     }
 
     /**
