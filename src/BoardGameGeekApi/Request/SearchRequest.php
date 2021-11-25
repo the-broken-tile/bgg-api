@@ -25,6 +25,7 @@ final class SearchRequest implements RequestInterface
         return [
             self::PARAM_QUERY => $this->query,
             self::PARAM_EXACT => $this->exact,
+            self::PARAM_TYPE => self::PARAM_BOARD_GAME,
         ];
     }
 }
