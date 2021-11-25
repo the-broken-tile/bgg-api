@@ -7,11 +7,11 @@ use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 final class UserRequest implements RequestInterface
 {
     private string $username;
-    private bool $buddies = false;
-    private bool $guilds = false;
+    private ?bool $buddies = null;
+    private ?bool $guilds = null;
     private int $page = 1;
-    private bool $top = false;
-    private bool $hot = false;
+    private ?bool $top = null;
+    private ?bool $hot = null;
 
     public function __construct(string $username)
     {

@@ -22,7 +22,8 @@ $client = new Client(
     new FilesystemAdapter(),
     new ObjectBuilder([
         new CollectionBuilder(),
-    ])
+    ]),
+    new UrlGenerator(),
 );
 
 var_dump($client->request(

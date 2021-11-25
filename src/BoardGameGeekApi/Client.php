@@ -12,20 +12,22 @@ final class Client implements ClientInterface
 {
     private const METHOD = 'GET';
     private const CACHE_VERSION = 1;
-    private const URL = 'https://api.geekdo.com/xmlapi2/%s?%s';
 
     private HttpClientInterface $client;
     private CacheInterface $cache;
     private ObjectBuilderManagerInterface $builder;
+    private UrlGeneratorInterface $urlGenerator;
 
     public function __construct(
         HttpClientInterface $client,
         CacheInterface $cache,
-        ObjectBuilderManagerInterface $gameBuilder
+        ObjectBuilderManagerInterface $gameBuilder,
+        UrlGeneratorInterface $urlGenerator
     ) {
         $this->client = $client;
         $this->cache = $cache;
         $this->builder = $gameBuilder;
+        $this->urlGenerator = $urlGenerator;
     }
 
     /**
@@ -33,7 +35,7 @@ final class Client implements ClientInterface
      */
     public function request(RequestInterface $request): ResponseInterface
     {
-        $url = $this->generateUrl($request);
+        $url = $this->urlGenerator->generate($request);
 
         $response = $this->cache->get($this->buildCacheKey($request), function (/*ItemInterface $item*/) use ($url): string {
             return $this->client->request(self::METHOD, $url)->getContent();
@@ -42,11 +44,6 @@ final class Client implements ClientInterface
         $thing = $this->builder->build($request, $response);
 
         return new Response($thing);
-    }
-
-    private function generateUrl(RequestInterface $request): string
-    {
-        return sprintf(self::URL, $request->getType(), http_build_query($request->getParams()));
     }
 
     private function buildCacheKey(RequestInterface $request): string
