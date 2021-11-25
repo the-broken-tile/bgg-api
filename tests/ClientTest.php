@@ -2,11 +2,10 @@
 
 namespace TheBrokenTile\Test\BoardGameGeekApi;
 
-use JetBrains\PhpStorm\Pure;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
-use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use TheBrokenTile\BoardGameGeekApi\Client;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterface;
@@ -27,7 +26,7 @@ final class ClientTest extends TestCase
     public function testRequest(): void
     {
         $httpClient = $this->prophesize(HttpClientInterface::class);
-        $cache = $this->prophesize(CacheInterface::class);
+        $cache = $this->prophesize(TagAwareCacheInterface::class);
         $objectBuilder = $this->prophesize(ObjectBuilderManagerInterface::class);
 
         $stringResponse = 'response';
