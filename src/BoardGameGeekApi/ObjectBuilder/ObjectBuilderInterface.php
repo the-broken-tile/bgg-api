@@ -60,6 +60,7 @@ interface ObjectBuilderInterface
     public const MIN_PLAY_TIME = 'minplaytime';
     public const MAX_PLAY_TIME = 'maxplaytime';
     public const MIN_AGE = 'minage';
+    public const RANKS = 'ranks';
     public const RANK = 'rank';
 
     public const POLL = 'poll';
@@ -102,6 +103,11 @@ interface ObjectBuilderInterface
     public const USER_GUILD = 'guild';
     public const USER_TOP = 'top';
     public const USER_HOT = 'hot';
+
+    public const RANK_NAME = self::NAME;
+    public const RANK_FRIENDLY_NAME = 'friendlyname';
+    public const RANK_BAYESIAN_AVERAGE = 'bayesaverage';
+    public const RANK_TYPE = self::TYPE;
 
     public function supports(RequestInterface $request): bool;
 

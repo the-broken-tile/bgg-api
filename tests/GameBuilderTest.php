@@ -6,7 +6,7 @@ use TheBrokenTile\BoardGameGeekApi\DataTransferObject\Game;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameLink;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameName;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GamePoll;
-use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameRatings;
+use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameRank;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameStatistics;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\GameBuilder;
 use PHPUnit\Framework\TestCase;
@@ -142,7 +142,25 @@ final class GameBuilderTest extends TestCase
                     1.9071,
                     7.30909,
                     1.30574,
-                    0.0
+                    0.0,
+                    [
+                        new GameRank(
+                            1,
+                            'boardgame',
+                            GameRank::TYPE_SUBTYPE,
+                            'Board Game Rank',
+                            185,
+                            7.30909,
+                        ),
+                        new GameRank(
+                            5499,
+                            'familygames',
+                            GameRank::TYPE_FAMILY,
+                            'Family Game Rank',
+                            40,
+                            7.30109,
+                        ),
+                    ]
                 ),
                 'nameIndex' => 1,
                 'expectedName' => new GameName(1, GameName::TYPE_ALTERNATE, 'Carcassonne Jubilee Edition'),
@@ -173,7 +191,8 @@ final class GameBuilderTest extends TestCase
         float $averageWeight,
         float $bayesAverage,
         float $stdDev,
-        float $median
+        float $median,
+        array $ranks
     ): GameStatistics
     {
         $stats = new GameStatistics();
@@ -189,6 +208,7 @@ final class GameBuilderTest extends TestCase
         $stats->ratings->bayesAverage = $bayesAverage;
         $stats->ratings->stdDev = $stdDev;
         $stats->ratings->median = $median;
+        $stats->ratings->ranks = $ranks;
 
         return $stats;
     }

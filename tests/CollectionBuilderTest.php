@@ -9,6 +9,7 @@ use TheBrokenTile\BoardGameGeekApi\DataTransferObject\CollectionStatus;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\CollectionVersion;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameLink;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameName;
+use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameRank;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameStatistics;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\CollectionBuilder;
 use TheBrokenTile\BoardGameGeekApi\Request\CollectionRequest;
@@ -54,7 +55,8 @@ final class CollectionBuilderTest extends TestCase
         ?string            $itemComment,
         ?CollectionVersion $itemVersion,
         ?GameStatistics    $itemStats
-    ): void {
+    ): void
+    {
         $collectionBuilder = new CollectionBuilder();
         $response = file_get_contents(__DIR__ . $fixture);
 
@@ -90,18 +92,34 @@ final class CollectionBuilderTest extends TestCase
      */
     public function buildDataProvider(): array
     {
+        $base = [
+            'itemIndex' => 0,
+            'fixture' => null,//placeholder
+            'pubDate' => null,//placeholder
+            'totalItems' => 480,
+            'itemType' => 'thing',
+            'itemId' => null,//placeholder
+            'itemSubType' => 'boardgame',
+            'itemCollectionId' => null,//placeholder
+            'itemImage' => null,
+            'itemThumbnail' => null,
+            'itemNames' => null,//placeholder
+            'itemStatus' => null,//placeholder
+            'itemYearPublished' => null,
+            'itemNumberOfPlays' => null,
+            'itemComment' => null,
+            'itemVersion' => null,
+            'itemStats' => null,
+        ];
+
+        $threeWishesRanks = [new GameRank(1, 'boardgame', GameRank::TYPE_SUBTYPE, 'Board Game Rank', 18548, 5.49373)];
+
         return [
-            'brief' => [
-                'itemIndex' => 0,
+            'brief' => array_merge($base, [
                 'fixture' => '/fixtures/collection_brief.xml',
                 'pubDate' => 'Tue, 09 Nov 2021 13:53:29 +0000',
-                'totalItems' => 480,
-                'itemType' => 'thing',
                 'itemId' => 198836,
-                'itemSubType' => 'boardgame',
                 'itemCollectionId' => 46499506,
-                'itemImage' => null,
-                'itemThumbnail' => null,
                 'itemNames' => [new GameName(1, null, '3 Wishes')],
                 'itemStatus' => new CollectionStatus(
                     true,
@@ -115,20 +133,11 @@ final class CollectionBuilderTest extends TestCase
                     '2018-03-02 05:30:09',
                     null
                 ),
-                'itemYearPublished' => null,
-                'itemNumberOfPlays' => null,
-                'itemComment' => null,
-                'itemVersion' => null,
-                'itemStats' => null,
-            ],
-            'collection' => [
-                'itemIndex' => 0,
+            ]),
+            'collection' => array_merge($base, [
                 'fixture' => '/fixtures/collection.xml',
                 'pubDate' => 'Tue, 09 Nov 2021 12:01:46 +0000',
-                'totalItems' => 480,
-                'itemType' => 'thing',
                 'itemId' => 198836,
-                'itemSubType' => 'boardgame',
                 'itemCollectionId' => 46499506,
                 'itemImage' => 'https://cf.geekdo-images.com/cLo9vChf7MbXI4buDQ2JCg__original/img/9kTwYwU94LuzzqnirGWpDtGToEo=/0x0/filters:format(png)/pic2993325.png',
                 'itemThumbnail' => 'https://cf.geekdo-images.com/cLo9vChf7MbXI4buDQ2JCg__thumb/img/OW6tryx9J4Vc0ZQBlc-li2JwhAU=/fit-in/200x150/filters:strip_icc()/pic2993325.png',
@@ -148,17 +157,11 @@ final class CollectionBuilderTest extends TestCase
                 'itemYearPublished' => 2016,
                 'itemNumberOfPlays' => 1,
                 'itemComment' => "Spiel'17",
-                'itemVersion' => null,
-                'itemStats' => null,
-            ],
-            'stats' => [
-                'itemIndex' => 0,
+            ]),
+            'stats' => array_merge($base, [
                 'fixture' => '/fixtures/collection_stats.xml',
                 'pubDate' => 'Tue, 09 Nov 2021 14:06:53 +0000',
-                'totalItems' => 480,
-                'itemType' => 'thing',
                 'itemId' => 198836,
-                'itemSubType' => 'boardgame',
                 'itemCollectionId' => 46499506,
                 'itemImage' => 'https://cf.geekdo-images.com/cLo9vChf7MbXI4buDQ2JCg__original/img/9kTwYwU94LuzzqnirGWpDtGToEo=/0x0/filters:format(png)/pic2993325.png',
                 'itemThumbnail' => 'https://cf.geekdo-images.com/cLo9vChf7MbXI4buDQ2JCg__thumb/img/OW6tryx9J4Vc0ZQBlc-li2JwhAU=/fit-in/200x150/filters:strip_icc()/pic2993325.png',
@@ -178,20 +181,21 @@ final class CollectionBuilderTest extends TestCase
                 'itemYearPublished' => 2016,
                 'itemNumberOfPlays' => 1,
                 'itemComment' => "Spiel'17",
-                'itemVersion' => null,
-                'itemStats' => $this->buildStatistics(1024, 5.51024, 5.49373, 1.48839, 0),
-            ],
-            'brief_stats' => [
+                'itemStats' => $this->buildStatistics(
+                    1024,
+                    5.51024,
+                    5.49373,
+                    1.48839,
+                    0,
+                    $threeWishesRanks,
+                ),
+            ]),
+            'brief_stats' => array_merge($base, [
                 'itemIndex' => 0,
                 'fixture' => '/fixtures/collection_brief_stats.xml',
                 'pubDate' => 'Tue, 09 Nov 2021 14:06:41 +0000',
-                'totalItems' => 480,
-                'itemType' => 'thing',
                 'itemId' => 198836,
-                'itemSubType' => 'boardgame',
                 'itemCollectionId' => 46499506,
-                'itemImage' => null,
-                'itemThumbnail' => null,
                 'itemNames' => [new GameName(1, null, '3 Wishes')],
                 'itemStatus' => new CollectionStatus(
                     true,
@@ -205,20 +209,20 @@ final class CollectionBuilderTest extends TestCase
                     '2018-03-02 05:30:09',
                     null
                 ),
-                'itemYearPublished' => null,
-                'itemNumberOfPlays' => null,
-                'itemComment' => null,
-                'itemVersion' => null,
-                'itemStats' => $this->buildStatistics(null, 5.51024, 5.49373, null, null),
-            ],
-            'version' => [
+                'itemStats' => $this->buildStatistics(
+                    null,
+                    5.51024,
+                    5.49373,
+                    null,
+                    null,
+                    []
+                ),
+            ]),
+            'version' => array_merge($base, [
                 'itemIndex' => 2,
                 'fixture' => '/fixtures/collection_version.xml',
                 'pubDate' => 'Tue, 09 Nov 2021 12:20:12 +0000',
-                'totalItems' => 480,
-                'itemType' => 'thing',
                 'itemId' => 145209,
-                'itemSubType' => 'boardgame',
                 'itemCollectionId' => 27875328,
                 'itemImage' => 'https://cf.geekdo-images.com/EjLDriIcasQlJQUHqRfOtQ__original/img/rJMMssiJCDOo_eElyDSybnrv_Zc=/0x0/filters:format(jpeg)/pic1721930.jpg',
                 'itemThumbnail' => 'https://cf.geekdo-images.com/EjLDriIcasQlJQUHqRfOtQ__thumb/img/Rh6MxWEW0dc4O7EYOQEYdbCxLUU=/fit-in/200x150/filters:strip_icc()/pic1721930.jpg',
@@ -237,7 +241,6 @@ final class CollectionBuilderTest extends TestCase
                 ),
                 'itemYearPublished' => 2015,
                 'itemNumberOfPlays' => 0,
-                'itemComment' => null,
                 'itemVersion' => $this->createVersion(
                     214187,
                     CollectionVersion::TYPE_VERSION,
@@ -251,12 +254,18 @@ final class CollectionBuilderTest extends TestCase
                     ],
                     [new GameName(1, GameName::TYPE_PRIMARY, 'English first edition')]
                 ),
-                'itemStats' => null,
-            ],
+            ]),
         ];
     }
 
-    private function buildStatistics(?int $usersRated, float $average, float $bayesAverage, ?float $stdDev, ?float $median): GameStatistics
+    private function buildStatistics(
+        ?int   $usersRated,
+        float  $average,
+        float  $bayesAverage,
+        ?float $stdDev,
+        ?float $median,
+        array $ranks
+    ): GameStatistics
     {
         $stats = new GameStatistics();
         $stats->ratings->usersRated = $usersRated;
@@ -264,6 +273,7 @@ final class CollectionBuilderTest extends TestCase
         $stats->ratings->bayesAverage = $bayesAverage;
         $stats->ratings->stdDev = $stdDev;
         $stats->ratings->median = $median;
+        $stats->ratings->ranks = $ranks;
 
         return $stats;
     }
