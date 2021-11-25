@@ -6,10 +6,9 @@ abstract class DataTransferObject implements DataTransferObjectInterface
 {
     use NameTrait;
     use LinksTrait;
+    use ImageTrait;
 
     public int $id;
-    public string $thumbnail;
-    public string $image;
     public string $description;
     public ?int $yearPublished;
     public ?int $minPlayers;
