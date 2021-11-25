@@ -24,7 +24,8 @@ $client = new Client(
     new FilesystemAdapter(),
     new ObjectBuilder([
         new SearchResultBuilder(),
-    ])
+    ]),
+    new UrlGenerator(),
 );
 
 var_dump($client->request(new SearchRequest($query, true)));

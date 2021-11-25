@@ -7,9 +7,9 @@ use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 final class SearchRequest implements RequestInterface
 {
     private string $query;
-    private bool $exact;
+    private ?bool $exact;
 
-    public function __construct(string $query, bool $exact = false)
+    public function __construct(string $query, bool $exact = null)
     {
         $this->query = $query;
         $this->exact = $exact;

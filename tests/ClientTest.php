@@ -12,6 +12,7 @@ use TheBrokenTile\BoardGameGeekApi\Client;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterface;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilderManagerInterface;
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
+use TheBrokenTile\BoardGameGeekApi\UrlGeneratorInterface;
 
 /**
  * @coversDefaultClass \TheBrokenTile\BoardGameGeekApi\Client
@@ -45,10 +46,14 @@ final class ClientTest extends TestCase
             ->shouldBeCalledOnce()
             ->willReturn($thing);
 
+        $urlGenerator = $this->prophesize(UrlGeneratorInterface::class);
+        $urlGenerator->generate($request)->willReturn('boardgamegeek.api');
+
         $client = new Client(
             $httpClient->reveal(),
             $cache->reveal(),
             $objectBuilder->reveal(),
+            $urlGenerator->reveal(),
         );
 
         self::assertSame($thing, $client->request($request)->getData());
