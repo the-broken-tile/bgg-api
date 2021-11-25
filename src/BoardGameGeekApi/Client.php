@@ -11,22 +11,26 @@ final class Client implements ClientInterface
 {
     private const METHOD = 'GET';
     private const TYPE_PREFIX = 'api_type_';
+    public const CACHE_TAG_PREFIX = 'the_broken_tile';
 
     private HttpClientInterface $client;
     private TagAwareCacheInterface $cache;
     private ObjectBuilderManagerInterface $builder;
     private UrlGeneratorInterface $urlGenerator;
+    private string $cacheTagPrefix;
 
     public function __construct(
         HttpClientInterface $client,
         TagAwareCacheInterface $cache,
         ObjectBuilderManagerInterface $gameBuilder,
-        UrlGeneratorInterface $urlGenerator
+        UrlGeneratorInterface $urlGenerator,
+        string $cacheTagPrefix = self::CACHE_TAG_PREFIX
     ) {
         $this->client = $client;
         $this->cache = $cache;
         $this->builder = $gameBuilder;
         $this->urlGenerator = $urlGenerator;
+        $this->cacheTagPrefix = $cacheTagPrefix;
     }
 
     public function request(RequestInterface $request): ResponseInterface
@@ -62,10 +66,10 @@ final class Client implements ClientInterface
     private function buildTags(RequestInterface $request): array
     {
         $tags = [
-            self::TYPE_PREFIX.$request->getType(),
+            sprintf('%s.%s%s',$this->cacheTagPrefix, self::TYPE_PREFIX, $request->getType()),
         ];
         foreach ($request->getParams() as $k => $v) {
-            $tags[] = $this->sanitizeKey(sprintf('%s_%s', $k, $v));
+            $tags[] = $this->sanitizeKey(sprintf('%s.%s_%s', $this->cacheTagPrefix, $k, $v));
         }
 
         return $tags;
