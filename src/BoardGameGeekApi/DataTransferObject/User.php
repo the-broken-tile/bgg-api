@@ -25,8 +25,8 @@ final class User implements DataTransferObjectInterface
     public array $buddies = [];
     /** @var UserGuild[] */
     public array $guilds = [];
-    /** @var UserTopItem[] */
-    public array $hot = [];
     /** @var UserHotItem[]  */
+    public array $hot = [];
+    /** @var UserTopItem[] */
     public array $top = [];
 }

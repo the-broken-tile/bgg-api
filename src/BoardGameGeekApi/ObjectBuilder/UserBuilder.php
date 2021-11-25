@@ -15,34 +15,45 @@ use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 final class UserBuilder implements ObjectBuilderInterface
 {
-
     public function supports(RequestInterface $request): bool
     {
         return $request instanceof UserRequest;
     }
 
+    /**
+     * @return User
+     * @throws InvalidResponseException
+     */
     public function build(string $response): DataTransferObjectInterface
     {
         $user = new User();
         $crawler = (new Crawler($response))->filter(self::USER)->eq(0);
 
-        $user->id = (int) $crawler->attr(self::ID);
-        $user->name = $crawler->attr(self::NAME);
-        $user->firstName = $crawler->filter(self::USER_FIRST_NAME)->attr(self::VALUE);
-        $user->lastName = $crawler->filter(self::USER_LAST_NAME)->attr(self::VALUE);
-        $user->avatarLink = $crawler->filter(self::USER_AVATAR_LINK)->attr(self::VALUE);
-        $user->yearRegistered = (int) $crawler->filter(self::USER_YEAR_REGISTERED)->attr(self::VALUE);
-        $user->lastLogin = $crawler->filter(self::USER_LAST_LOGIN)->attr(self::VALUE);
-        $user->stateOrProvince = $crawler->filter(self::USER_STATE_OR_PROVINCE)->attr(self::VALUE);
-        $user->country = $crawler->filter(self::USER_COUNTRY)->attr(self::VALUE);
-        $user->webAddress = $crawler->filter(self::USER_WEB_ADDRESS)->attr(self::VALUE);
-        $user->xBoxAccount = $crawler->filter(self::USER_ACCOUNT_XBOX)->attr(self::VALUE);
-        $user->wiiAccount = $crawler->filter(self::USER_ACCOUNT_WII)->attr(self::VALUE);
-        $user->psnAccount = $crawler->filter(self::USER_ACCOUNT_PSN)->attr(self::VALUE);
-        $user->battleNetAccount = $crawler->filter(self::USER_ACCOUNT_BATTLE_NET)->attr(self::VALUE);
-        $user->steamAccount = $crawler->filter(self::USER_ACCOUNT_STEAM)->attr(self::VALUE);
-        $user->tradeRating = (int) $crawler->filter(self::USER_TRADE_RATING)->attr(self::VALUE);
-        $user->marketRating = (int) $crawler->filter(self::USER_MARKET_RATING)->attr(self::VALUE);
+        $id = $crawler->attr(self::ID);
+        if (!is_numeric($id)) {
+            throw new InvalidResponseException('"id" should be an integer');
+        }
+        $user->id = (int) $id;
+        $name = $crawler->attr(self::NAME);
+        if (!is_string($name)) {
+            throw new InvalidResponseException('"name" should be a string');
+        }
+        $user->name = $name;
+        $user->firstName = $this->getStringValue($crawler, self::USER_FIRST_NAME);
+        $user->lastName = $this->getStringValue($crawler, self::USER_LAST_NAME);
+        $user->avatarLink = $this->getSTringValue($crawler, self::USER_AVATAR_LINK);
+        $user->yearRegistered = $this->getIntValue($crawler,self::USER_YEAR_REGISTERED);
+        $user->lastLogin = $this->getStringValue($crawler, self::USER_LAST_LOGIN);
+        $user->stateOrProvince = $this->getStringValue($crawler, self::USER_STATE_OR_PROVINCE);
+        $user->country = $this->getStringValue($crawler, self::USER_COUNTRY);
+        $user->webAddress = $this->getStringValue($crawler, self::USER_WEB_ADDRESS);
+        $user->xBoxAccount = $this->getStringValue($crawler, self::USER_ACCOUNT_XBOX);
+        $user->wiiAccount = $this->getStringValue($crawler, self::USER_ACCOUNT_WII);
+        $user->psnAccount = $this->getStringValue($crawler, self::USER_ACCOUNT_PSN);
+        $user->battleNetAccount = $this->getStringValue($crawler, self::USER_ACCOUNT_BATTLE_NET);
+        $user->steamAccount = $this->getStringValue($crawler, self::USER_ACCOUNT_STEAM);
+        $user->tradeRating = $this->getIntValue($crawler, self::USER_TRADE_RATING);
+        $user->marketRating = $this->getIntValue($crawler, self::USER_MARKET_RATING);
 
         $this->addBuddies($crawler, $user);
         $this->addGuilds($crawler, $user);
@@ -116,5 +127,35 @@ final class UserBuilder implements ObjectBuilderInterface
                 $item->getAttribute(self::VALUE),
             );
         }
+    }
+
+    /**
+     * @throws InvalidResponseException
+     */
+    private function getStringValue(Crawler $crawler, string $selector): string
+    {
+        $value = $crawler->filter($selector)->attr(self::VALUE);
+        if ($value === null) {
+            throw new InvalidResponseException(sprintf('"%s" is required', $selector));
+        }
+
+        return $value;
+    }
+
+    /**
+     * @throws InvalidResponseException
+     */
+    private function getIntValue(Crawler $crawler, string $selector): int
+    {
+        $value = $crawler->filter($selector)->attr(self::VALUE);
+        if ($value === null) {
+            throw new InvalidResponseException(sprintf('"%s" is required', $selector));
+        }
+
+        if (!is_numeric($value)) {
+            throw new InvalidResponseException(sprintf('"%s" should be numeric', $selector));
+        }
+
+        return (int) $value;
     }
 }

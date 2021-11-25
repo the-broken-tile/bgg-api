@@ -24,12 +24,17 @@ final class CollectionBuilder extends AbstractObjectBuilder
         return $request instanceof CollectionRequest;
     }
 
+    /**
+     * @return Collection
+     */
     public function build(string $response): DataTransferObjectInterface
     {
         $collection = new Collection();
         $crawler = new Crawler($response);
         $collection->totalItems = (int) $crawler->filter(self::ITEMS)->attr(self::TOTAL_ITEMS);
-        $collection->pubDate = $crawler->filter(self::ITEMS)->attr(self::PUBLISH_DATE);
+        $pubDate = $crawler->filter(self::ITEMS)->attr(self::PUBLISH_DATE);;
+        assert(is_string($pubDate));
+        $collection->pubDate = $pubDate;
 
         $this->addItems($crawler, $collection);
 
@@ -69,7 +74,7 @@ final class CollectionBuilder extends AbstractObjectBuilder
         if ($yearPublishedElement->count() === 0) {
             return;
         }
-        $item->yearPublished = $yearPublishedElement->text();
+        $item->yearPublished = (int) $yearPublishedElement->text();
     }
 
     /**
@@ -117,17 +122,20 @@ final class CollectionBuilder extends AbstractObjectBuilder
     {
         $status = $itemCrawler->filter(self::COLLECTION_STATUS);
 
+        $lastModified = $status->attr(self::LAST_MODIFIED);
+        assert(is_string($lastModified));
+        $wishlistPriority = $status->attr(self::COLLECTION_WISHLIST_PRIORITY);
         $item->status = new CollectionStatus(
-            $status->attr(self::COLLECTION_OWN),
-            $status->attr(self::COLLECTION_PREVIOUSLY_OWN),
-            $status->attr(self::COLLECTION_FOR_TRADE),
-            $status->attr(self::COLLECTION_WANT),
-            $status->attr(self::COLLECTION_WANT_TO_PLAY),
-            $status->attr(self::COLLECTION_WANT_TO_BUY),
-            $status->attr(self::COLLECTION_WISHLIST),
-            $status->attr(self::COLLECTION_PRE_ORDERED),
-            $status->attr(self::LAST_MODIFIED),
-            $status->attr(self::COLLECTION_WISHLIST_PRIORITY),
+            (bool) $status->attr(self::COLLECTION_OWN),
+            (bool) $status->attr(self::COLLECTION_PREVIOUSLY_OWN),
+            (bool) $status->attr(self::COLLECTION_FOR_TRADE),
+            (bool) $status->attr(self::COLLECTION_WANT),
+            (bool) $status->attr(self::COLLECTION_WANT_TO_PLAY),
+            (bool) $status->attr(self::COLLECTION_WANT_TO_BUY),
+            (bool) $status->attr(self::COLLECTION_WISHLIST),
+            (bool) $status->attr(self::COLLECTION_PRE_ORDERED),
+            $lastModified,
+            $wishlistPriority === null ? null : (int) $wishlistPriority,
         );
     }
 

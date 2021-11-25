@@ -11,6 +11,7 @@ final class ObjectBuilder implements ObjectBuilderManagerInterface
     /** @var iterable<ObjectBuilderInterface> */
     private iterable $builders;
 
+    /** @param iterable<ObjectBuilderInterface> $builders*/
     public function __construct(iterable $builders)
     {
         $this->builders = $builders;

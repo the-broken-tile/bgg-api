@@ -69,6 +69,7 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
             );
             $pollCrawler = new Crawler($pollElement);
             foreach ($pollCrawler->filter(self::RESULT) as $resultElement) {
+                assert($resultElement instanceof DOMElement);
                 $poll->results[] = new PollResult(
                     $resultElement->getAttribute(self::VALUE),
                     (int) $resultElement->getAttribute(self::NUMBER_OF_VOTES),

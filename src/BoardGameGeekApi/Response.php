@@ -4,9 +4,9 @@ namespace TheBrokenTile\BoardGameGeekApi;
 
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterface;
 
-class Response implements ResponseInterface
+final class Response implements ResponseInterface
 {
-    private object $data;
+    private DataTransferObjectInterface $data;
 
     public function __construct(DataTransferObjectInterface $data)
     {

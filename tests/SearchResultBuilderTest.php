@@ -38,6 +38,7 @@ final class SearchResultBuilderTest extends TestCase
     ): void
     {
         $response = file_get_contents(__DIR__ . $fixture);
+        assert(is_string($response));
         $builder = new SearchResultBuilder();
 
         $searchResults = $builder->build($response);
@@ -45,7 +46,7 @@ final class SearchResultBuilderTest extends TestCase
         self::assertCount($expectedTotal, $searchResults->items);
 
         $item = current($searchResults->items);
-        self::assertInstanceOf(SearchItem::class, $item);
+        assert($item instanceof SearchItem);
         self::assertSame($expectedItemId, $item->id);
         self::assertSame($expectedItemType, $item->type);
         self::assertEquals($expectedItemName, $item->name);
