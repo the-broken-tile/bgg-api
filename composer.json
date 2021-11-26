@@ -45,6 +45,7 @@
         ],
         "test": "./vendor/bin/phpunit -c ./tests/phpunit.xml",
         "phpstan": "./vendor/bin/phpstan analyse -c phpstan.neon",
-        "fix": "./vendor/bin/php-cs-fixer fix --allow-risky=yes"
+        "fix": "./vendor/bin/php-cs-fixer fix --allow-risky=yes",
+        "fix-ci": "./vendor/bin/php-cs-fixer fix --dry-run --allow-risky=yes"
     }
 }
