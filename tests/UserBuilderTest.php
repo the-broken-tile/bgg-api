@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\Test\BoardGameGeekApi\ObjectBuilder;
 
 use PHPUnit\Framework\TestCase;
@@ -12,6 +14,8 @@ use TheBrokenTile\BoardGameGeekApi\Request\UserRequest;
 
 /**
  * @coversDefaultClass \TheBrokenTile\BoardGameGeekApi\ObjectBuilder\UserBuilder
+ *
+ * @internal
  */
 final class UserBuilderTest extends TestCase
 {
@@ -33,7 +37,7 @@ final class UserBuilderTest extends TestCase
     {
         $userBuilder = new UserBuilder();
         $response = file_get_contents(__DIR__.'/fixtures/user.xml');
-        assert(is_string($response));
+        \assert(\is_string($response));
 
         $user = $userBuilder->build($response);
         self::assertInstanceOf(User::class, $user);
@@ -58,7 +62,7 @@ final class UserBuilderTest extends TestCase
         //Buddies.
         self::assertCount(9, $user->buddies);
         $buddy = current($user->buddies);
-        assert($buddy instanceof UserBuddy);
+        \assert($buddy instanceof UserBuddy);
         self::assertSame(1201816, $buddy->id);
         self::assertSame('aymaliev', $buddy->name);
 

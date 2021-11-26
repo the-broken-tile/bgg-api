@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\Test\BoardGameGeekApi;
 
 use PHPUnit\Framework\TestCase;
@@ -15,6 +17,8 @@ use TheBrokenTile\BoardGameGeekApi\UrlGeneratorInterface;
 
 /**
  * @coversDefaultClass \TheBrokenTile\BoardGameGeekApi\Client
+ *
+ * @internal
  */
 final class ClientTest extends TestCase
 {
@@ -32,7 +36,8 @@ final class ClientTest extends TestCase
         $stringResponse = 'response';
 
         $cache->get(Argument::type('string'), Argument::type('callable'))
-            ->willReturn($stringResponse);
+            ->willReturn($stringResponse)
+        ;
 
         $request = $this->prophesize(RequestInterface::class);
         $request->getType()->willReturn('type');
@@ -43,7 +48,8 @@ final class ClientTest extends TestCase
 
         $objectBuilder->build($request, $stringResponse)
             ->shouldBeCalledOnce()
-            ->willReturn($thing);
+            ->willReturn($thing)
+        ;
 
         $urlGenerator = $this->prophesize(UrlGeneratorInterface::class);
         $urlGenerator->generate($request)->willReturn('boardgamegeek.api');

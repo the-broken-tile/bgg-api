@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\BoardGameGeekApi\ObjectBuilder;
 
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterface;

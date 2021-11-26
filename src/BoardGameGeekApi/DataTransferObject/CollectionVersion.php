@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
 final class CollectionVersion
 {
-    public const TYPE_VERSION = 'boardgameversion';
-
     use ImageTrait;
-    use NameTrait;
     use LinksTrait;
+    use NameTrait;
+
+    public const TYPE_VERSION = 'boardgameversion';
 
     public string $type;
     public int $id;

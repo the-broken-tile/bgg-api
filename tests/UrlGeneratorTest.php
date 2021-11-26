@@ -1,17 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\Test;
 
+use PHPUnit\Framework\TestCase;
 use TheBrokenTile\BoardGameGeekApi\Request\CollectionRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\GameRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\SearchRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\UserRequest;
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 use TheBrokenTile\BoardGameGeekApi\UrlGenerator;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass \TheBrokenTile\BoardGameGeekApi\UrlGenerator
+ *
+ * @internal
  */
 final class UrlGeneratorTest extends TestCase
 {
@@ -52,15 +56,15 @@ final class UrlGeneratorTest extends TestCase
             ],
             'search' => [
                 'https://api.geekdo.com/xmlapi2/search?query=Carcassonne&type=boardgame',
-                new SearchRequest('Carcassonne')
+                new SearchRequest('Carcassonne'),
             ],
             'exact search' => [
                 'https://api.geekdo.com/xmlapi2/search?query=Carcassonne&exact=1&type=boardgame',
-                new SearchRequest('Carcassonne', true)
+                new SearchRequest('Carcassonne', true),
             ],
             'user' => [
                 'https://api.geekdo.com/xmlapi2/user?name=tazzadar1337&page=1',
-                new UserRequest('tazzadar1337')
+                new UserRequest('tazzadar1337'),
             ],
         ];
     }

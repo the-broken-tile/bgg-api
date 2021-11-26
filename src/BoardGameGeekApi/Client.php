@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\BoardGameGeekApi;
 
 use Symfony\Contracts\Cache\ItemInterface;
@@ -9,9 +11,9 @@ use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilderManagerInterface;
 
 final class Client implements ClientInterface
 {
+    public const CACHE_TAG_PREFIX = 'the_broken_tile';
     private const METHOD = 'GET';
     private const TYPE_PREFIX = 'api_type_';
-    public const CACHE_TAG_PREFIX = 'the_broken_tile';
 
     private HttpClientInterface $client;
     private TagAwareCacheInterface $cache;
@@ -42,7 +44,7 @@ final class Client implements ClientInterface
 
             return $this->client->request(self::METHOD, $url)->getContent();
         });
-        assert(is_string($response));
+        \assert(\is_string($response));
 
         $thing = $this->builder->build($request, $response);
 
@@ -54,7 +56,7 @@ final class Client implements ClientInterface
         $key = sprintf(
             '%s|%s',
             $request->getType(),
-            join('|', array_values($request->getParams())),
+            implode('|', array_values($request->getParams())),
         );
 
         return $this->sanitizeKey($key);
@@ -66,7 +68,7 @@ final class Client implements ClientInterface
     private function buildTags(RequestInterface $request): array
     {
         $tags = [
-            sprintf('%s.%s%s',$this->cacheTagPrefix, self::TYPE_PREFIX, $request->getType()),
+            sprintf('%s.%s%s', $this->cacheTagPrefix, self::TYPE_PREFIX, $request->getType()),
         ];
         foreach ($request->getParams() as $k => $v) {
             $tags[] = $this->sanitizeKey(sprintf('%s.%s_%s', $this->cacheTagPrefix, $k, $v));
@@ -77,6 +79,6 @@ final class Client implements ClientInterface
 
     private function sanitizeKey(string $key): string
     {
-        return str_replace(str_split( ItemInterface::RESERVED_CHARACTERS.' '), [], $key);
+        return str_replace(str_split(ItemInterface::RESERVED_CHARACTERS.' '), [], $key);
     }
 }

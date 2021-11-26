@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\BoardGameGeekApi;
 
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\Collection;
@@ -23,7 +25,7 @@ final class FluentClient
     public function game(int $id): Game
     {
         $game = $this->client->request(new GameRequest($id))->getData();
-        assert($game instanceof Game);
+        \assert($game instanceof Game);
 
         return $game;
     }
@@ -31,7 +33,7 @@ final class FluentClient
     public function search(string $query, bool $exact = false): SearchResults
     {
         $searchResult = $this->client->request(new SearchRequest($query, $exact))->getData();
-        assert($searchResult instanceof SearchResults);
+        \assert($searchResult instanceof SearchResults);
 
         return $searchResult;
     }
@@ -39,7 +41,7 @@ final class FluentClient
     public function user(string $username): User
     {
         $user = $this->client->request(new UserRequest($username))->getData();
-        assert($user instanceof User);
+        \assert($user instanceof User);
 
         return $user;
     }
@@ -47,7 +49,7 @@ final class FluentClient
     public function collection(string $username): Collection
     {
         $collection = $this->client->request(new CollectionRequest($username))->getData();
-        assert($collection instanceof Collection);
+        \assert($collection instanceof Collection);
 
         return $collection;
     }

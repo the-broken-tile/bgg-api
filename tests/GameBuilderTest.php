@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\Test;
 
+use PHPUnit\Framework\TestCase;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\Game;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameLink;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameName;
@@ -9,12 +12,13 @@ use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GamePoll;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameRank;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameStatistics;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\GameBuilder;
-use PHPUnit\Framework\TestCase;
 use TheBrokenTile\BoardGameGeekApi\Request\GameRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\SearchRequest;
 
 /**
  * @coversDefaultCLass \TheBrokenTile\BoardGameGeekApi\ObjectBuilder\GameBuilder
+ *
+ * @internal
  */
 final class GameBuilderTest extends TestCase
 {
@@ -34,35 +38,34 @@ final class GameBuilderTest extends TestCase
      * @dataProvider buildDataProvider
      */
     public function testBuild(
-        int             $expectedId,
-        string          $expectedImage,
-        string          $expectedThumbnail,
-        string          $expectedDescriptionStart,
-        int             $expectedYearPublished,
-        int             $expectedMinPlayers,
-        int             $expectedMaxPlayers,
-        int             $expectedPlayingTime,
-        int             $expectedMinPlayTime,
-        int             $expectedMaxPlayTime,
-        int             $expectedMinAge,
-        int             $expectedNamesCount,
-        int             $nameIndex,
-        GameName        $expectedName,
-        int             $expectedLinksCount,
-        int             $linkIndex,
-        GameLink        $expectedGameLink,
-        int             $expectedPollsCount,
-        string          $expectedPollName,
-        string          $expectedPollTitle,
-        int             $expectedPollVotes,
-        int             $expectedPollResultsCount,
+        int $expectedId,
+        string $expectedImage,
+        string $expectedThumbnail,
+        string $expectedDescriptionStart,
+        int $expectedYearPublished,
+        int $expectedMinPlayers,
+        int $expectedMaxPlayers,
+        int $expectedPlayingTime,
+        int $expectedMinPlayTime,
+        int $expectedMaxPlayTime,
+        int $expectedMinAge,
+        int $expectedNamesCount,
+        int $nameIndex,
+        GameName $expectedName,
+        int $expectedLinksCount,
+        int $linkIndex,
+        GameLink $expectedGameLink,
+        int $expectedPollsCount,
+        string $expectedPollName,
+        string $expectedPollTitle,
+        int $expectedPollVotes,
+        int $expectedPollResultsCount,
         ?GameStatistics $expectedStats,
-        string          $fixture
-    ): void
-    {
+        string $fixture
+    ): void {
         $builder = new GameBuilder();
-        $response = file_get_contents(__DIR__ . $fixture);
-        assert(is_string($response));
+        $response = file_get_contents(__DIR__.$fixture);
+        \assert(\is_string($response));
 
         $game = $builder->build($response);
         self::assertInstanceOf(Game::class, $game);
@@ -90,7 +93,7 @@ final class GameBuilderTest extends TestCase
         // @todo rework poll results, they have different structure, current implementation doesn't support both.
         self::assertCount($expectedPollsCount, $game->polls);
         $poll = current($game->polls);
-        assert($poll instanceof GamePoll);
+        \assert($poll instanceof GamePoll);
         self::assertSame($expectedPollName, $poll->name);
         self::assertSame($expectedPollTitle, $poll->title);
         self::assertSame($expectedPollVotes, $poll->totalVotes);
@@ -117,11 +120,11 @@ final class GameBuilderTest extends TestCase
             'expectedMaxPlayTime' => 45,
             'expectedMinAge' => 7,
             'expectedNamesCount' => 17,
-            'nameIndex' => null,//placeholder
-            'expectedName' => null,//placeholder
+            'nameIndex' => null, //placeholder
+            'expectedName' => null, //placeholder
             'expectedLinksCount' => 243,
-            'linkIndex' => null,//placeholder
-            'expectedLink' => null,//placeholder
+            'linkIndex' => null, //placeholder
+            'expectedLink' => null, //placeholder
             'expectedPollsCount' => 3,
             'expectedPollName' => 'suggested_numplayers',
             'expectedPollTitle' => 'User Suggested Number of Players',
@@ -184,21 +187,20 @@ final class GameBuilderTest extends TestCase
      * @param GameRank[] $ranks
      */
     private function buildStats(
-        int   $usersRated,
+        int $usersRated,
         float $average,
-        int   $owned,
-        int   $trading,
-        int   $wanting,
-        int   $wishing,
-        int   $numComments,
-        int   $numWeights,
+        int $owned,
+        int $trading,
+        int $wanting,
+        int $wishing,
+        int $numComments,
+        int $numWeights,
         float $averageWeight,
         float $bayesAverage,
         float $stdDev,
         float $median,
         array $ranks
-    ): GameStatistics
-    {
+    ): GameStatistics {
         $stats = new GameStatistics();
         $stats->ratings->usersRated = $usersRated;
         $stats->ratings->average = $average;

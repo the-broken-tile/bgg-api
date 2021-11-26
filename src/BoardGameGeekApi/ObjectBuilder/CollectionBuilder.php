@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\BoardGameGeekApi\ObjectBuilder;
 
 use DOMElement;
@@ -32,8 +34,9 @@ final class CollectionBuilder extends AbstractObjectBuilder
         $collection = new Collection();
         $crawler = new Crawler($response);
         $collection->totalItems = (int) $crawler->filter(self::ITEMS)->attr(self::TOTAL_ITEMS);
-        $pubDate = $crawler->filter(self::ITEMS)->attr(self::PUBLISH_DATE);;
-        assert(is_string($pubDate));
+        $pubDate = $crawler->filter(self::ITEMS)->attr(self::PUBLISH_DATE);
+
+        \assert(\is_string($pubDate));
         $collection->pubDate = $pubDate;
 
         $this->addItems($crawler, $collection);
@@ -71,7 +74,7 @@ final class CollectionBuilder extends AbstractObjectBuilder
     private function addYearPublished(Crawler $itemCrawler, CollectionItem $item): void
     {
         $yearPublishedElement = $itemCrawler->filter(self::YEAR_PUBLISHED);
-        if ($yearPublishedElement->count() === 0) {
+        if (0 === $yearPublishedElement->count()) {
             return;
         }
         $item->yearPublished = (int) $yearPublishedElement->text();
@@ -83,27 +86,25 @@ final class CollectionBuilder extends AbstractObjectBuilder
     private function addImage(Crawler $crawler, $item): void
     {
         $image = $crawler->filter(self::IMAGE);
-        if ($image->count() === 0) {
+        if (0 === $image->count()) {
             return;
         }
         $item->image = $image->text();
     }
 
     /**
-     * @param Crawler $crawler
      * @param CollectionItem|CollectionVersion $item
      */
     private function addThumbnail(Crawler $crawler, $item): void
     {
         $thumbnail = $crawler->filter(self::THUMBNAIL);
-        if ($thumbnail->count() === 0) {
+        if (0 === $thumbnail->count()) {
             return;
         }
         $item->thumbnail = $thumbnail->text();
     }
 
     /**
-     * @param Crawler $crawler
      * @param CollectionItem|CollectionVersion $item
      */
     private function addName(Crawler $crawler, $item): void
@@ -123,7 +124,7 @@ final class CollectionBuilder extends AbstractObjectBuilder
         $status = $itemCrawler->filter(self::COLLECTION_STATUS);
 
         $lastModified = $status->attr(self::LAST_MODIFIED);
-        assert(is_string($lastModified));
+        \assert(\is_string($lastModified));
         $wishlistPriority = $status->attr(self::COLLECTION_WISHLIST_PRIORITY);
         $item->status = new CollectionStatus(
             (bool) $status->attr(self::COLLECTION_OWN),
@@ -135,14 +136,14 @@ final class CollectionBuilder extends AbstractObjectBuilder
             (bool) $status->attr(self::COLLECTION_WISHLIST),
             (bool) $status->attr(self::COLLECTION_PRE_ORDERED),
             $lastModified,
-            $wishlistPriority === null ? null : (int) $wishlistPriority,
+            null === $wishlistPriority ? null : (int) $wishlistPriority,
         );
     }
 
     private function addNumberOfPlays(Crawler $crawler, CollectionItem $item): void
     {
         $numberOfPlays = $crawler->filter(self::NUMBER_OF_PLAYS);
-        if ($numberOfPlays->count() === 0) {
+        if (0 === $numberOfPlays->count()) {
             return;
         }
 
@@ -152,7 +153,7 @@ final class CollectionBuilder extends AbstractObjectBuilder
     private function addComment(Crawler $itemCrawler, CollectionItem $item): void
     {
         $comment = $itemCrawler->filter(self::COMMENT);
-        if ($comment->count() === 0) {
+        if (0 === $comment->count()) {
             return;
         }
         $item->comment = $comment->text();
@@ -161,7 +162,7 @@ final class CollectionBuilder extends AbstractObjectBuilder
     private function addVersion(Crawler $itemCrawler, CollectionItem $item): void
     {
         $version = $itemCrawler->filter(self::VERSION);
-        if ($version->count() === 0) {
+        if (0 === $version->count()) {
             return;
         }
 

@@ -1,16 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\Test;
 
+use PHPUnit\Framework\TestCase;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameName;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\SearchItem;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\SearchResultBuilder;
-use PHPUnit\Framework\TestCase;
 use TheBrokenTile\BoardGameGeekApi\Request\GameRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\SearchRequest;
 
 /**
  * @coversDefaultClass \TheBrokenTile\BoardGameGeekApi\ObjectBuilder\SearchResultBuilder
+ *
+ * @internal
  */
 final class SearchResultBuilderTest extends TestCase
 {
@@ -29,16 +33,15 @@ final class SearchResultBuilderTest extends TestCase
      * @dataProvider supportsDataProvider
      */
     public function testBuild(
-        string   $fixture,
-        int      $expectedTotal,
-        int      $expectedItemId,
-        string   $expectedItemType,
+        string $fixture,
+        int $expectedTotal,
+        int $expectedItemId,
+        string $expectedItemType,
         GameName $expectedItemName,
-        int      $expectedItemYearPublished
-    ): void
-    {
-        $response = file_get_contents(__DIR__ . $fixture);
-        assert(is_string($response));
+        int $expectedItemYearPublished
+    ): void {
+        $response = file_get_contents(__DIR__.$fixture);
+        \assert(\is_string($response));
         $builder = new SearchResultBuilder();
 
         $searchResults = $builder->build($response);
@@ -46,7 +49,7 @@ final class SearchResultBuilderTest extends TestCase
         self::assertCount($expectedTotal, $searchResults->items);
 
         $item = current($searchResults->items);
-        assert($item instanceof SearchItem);
+        \assert($item instanceof SearchItem);
         self::assertSame($expectedItemId, $item->id);
         self::assertSame($expectedItemType, $item->type);
         self::assertEquals($expectedItemName, $item->name);

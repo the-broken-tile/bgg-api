@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
 final class User implements DataTransferObjectInterface
@@ -25,7 +27,7 @@ final class User implements DataTransferObjectInterface
     public array $buddies = [];
     /** @var UserGuild[] */
     public array $guilds = [];
-    /** @var UserHotItem[]  */
+    /** @var UserHotItem[] */
     public array $hot = [];
     /** @var UserTopItem[] */
     public array $top = [];

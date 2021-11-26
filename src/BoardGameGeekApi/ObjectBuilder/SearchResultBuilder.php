@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\BoardGameGeekApi\ObjectBuilder;
 
 use DOMElement;
@@ -38,7 +40,7 @@ final class SearchResultBuilder extends AbstractObjectBuilder
             $name = $itemCrawler->filter(self::NAME)->eq(0);
             $yearPublished = $itemCrawler->filter(self::YEAR_PUBLISHED);
             $value = $name->attr(self::VALUE);
-            assert(is_string($value));
+            \assert(\is_string($value));
 
             $items[] = new SearchItem(
                 (int) $itemElement->getAttribute(self::ID),
@@ -48,7 +50,7 @@ final class SearchResultBuilder extends AbstractObjectBuilder
                     $name->attr(self::TYPE),
                     $value,
                 ),
-                $yearPublished->count() ? (int) $yearPublished->attr(self::VALUE): null,
+                $yearPublished->count() ? (int) $yearPublished->attr(self::VALUE) : null,
             );
         }
 

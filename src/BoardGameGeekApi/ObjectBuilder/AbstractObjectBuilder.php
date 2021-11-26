@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\BoardGameGeekApi\ObjectBuilder;
 
 use DOMElement;
@@ -61,7 +63,6 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
         $polls = [];
         /** @var DOMElement $pollElement */
         foreach ($this->crawler->filter(self::POLL) as $pollElement) {
-
             $poll = new GamePoll(
                 $pollElement->getAttribute(self::NAME),
                 $pollElement->getAttribute(self::TITLE),
@@ -69,7 +70,7 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
             );
             $pollCrawler = new Crawler($pollElement);
             foreach ($pollCrawler->filter(self::RESULT) as $resultElement) {
-                assert($resultElement instanceof DOMElement);
+                \assert($resultElement instanceof DOMElement);
                 $poll->results[] = new PollResult(
                     $resultElement->getAttribute(self::VALUE),
                     (int) $resultElement->getAttribute(self::NUMBER_OF_VOTES),
@@ -100,7 +101,7 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
     protected function getStats(Crawler $crawler): ?GameStatistics
     {
         $statsCrawler = $crawler->filter($this->statsKey);
-        if ($statsCrawler->count() === 0) {
+        if (0 === $statsCrawler->count()) {
             return null;
         }
         $stats = new GameStatistics();
@@ -111,9 +112,9 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
         $stats->ratings->bayesAverage = (float) $ratingsCrawler->filter(self::BAYESIAN_AVERAGE)->attr(self::VALUE);
 
         //These three are set for collection and game with stats=1.
-        $stats->ratings->usersRated = $this->getIntAttribute($ratingsCrawler,self::USERS_RATED);
-        $stats->ratings->stdDev = $this->getFloatAttribute($ratingsCrawler,self::STANDARD_DEVIATION);
-        $stats->ratings->median = $this->getFloatAttribute($ratingsCrawler,self::MEDIAN);
+        $stats->ratings->usersRated = $this->getIntAttribute($ratingsCrawler, self::USERS_RATED);
+        $stats->ratings->stdDev = $this->getFloatAttribute($ratingsCrawler, self::STANDARD_DEVIATION);
+        $stats->ratings->median = $this->getFloatAttribute($ratingsCrawler, self::MEDIAN);
 
         //There rest are only set for game with stats=1.
         $stats->ratings->owned = $this->getIntAttribute($ratingsCrawler, self::OWNED);
@@ -131,25 +132,27 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
     protected function getIntAttribute(Crawler $crawler, string $selector): ?int
     {
         $subCrawler = $crawler->filter($selector);
-        if ($subCrawler->count() === 0) {
+        if (0 === $subCrawler->count()) {
             return null;
         }
+
         return (int) $subCrawler->attr(self::VALUE);
     }
 
     private function getFloatAttribute(Crawler $crawler, string $selector): ?float
     {
         $subCrawler = $crawler->filter($selector);
-        if ($subCrawler->count() === 0) {
+        if (0 === $subCrawler->count()) {
             return null;
         }
+
         return (float) $subCrawler->attr(self::VALUE);
     }
 
     private function addRanks(GameRatings $ratings, Crawler $ratingsCrawler): void
     {
         $ranks = $ratingsCrawler->filter(self::RANKS);
-        if ($ranks->count() === 0) {
+        if (0 === $ranks->count()) {
             return;
         }
 
