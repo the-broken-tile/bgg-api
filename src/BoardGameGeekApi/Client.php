@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\BoardGameGeekApi;
 
 use Symfony\Contracts\Cache\ItemInterface;
@@ -54,7 +56,7 @@ final class Client implements ClientInterface
         $key = sprintf(
             '%s|%s',
             $request->getType(),
-            join('|', array_values($request->getParams())),
+            implode('|', array_values($request->getParams())),
         );
 
         return $this->sanitizeKey($key);

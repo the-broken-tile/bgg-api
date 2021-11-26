@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\BoardGameGeekApi;
 
 final class UrlGenerator implements UrlGeneratorInterface

@@ -7,6 +7,8 @@ $config = new PhpCsFixer\Config();
 return $config->setRules([
     '@PSR12' => true,
     '@DoctrineAnnotation' => true,
+    '@PHP80Migration' => true,
+    '@PHP80Migration:risky' => true,
     'strict_param' => true,
     'array_syntax' => ['syntax' => 'short'],
 ])

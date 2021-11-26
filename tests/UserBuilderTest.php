@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\Test\BoardGameGeekApi\ObjectBuilder;
 
 use PHPUnit\Framework\TestCase;
