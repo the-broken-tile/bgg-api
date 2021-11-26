@@ -55,8 +55,7 @@ final class CollectionBuilderTest extends TestCase
         ?string            $itemComment,
         ?CollectionVersion $itemVersion,
         ?GameStatistics    $itemStats
-    ): void
-    {
+    ): void {
         $collectionBuilder = new CollectionBuilder();
         $response = file_get_contents(__DIR__ . $fixture);
         assert(is_string($response));
@@ -269,8 +268,7 @@ final class CollectionBuilderTest extends TestCase
         ?float $stdDev,
         ?float $median,
         array $ranks
-    ): GameStatistics
-    {
+    ): GameStatistics {
         $stats = new GameStatistics();
         $stats->ratings->usersRated = $usersRated;
         $stats->ratings->average = $average;
@@ -296,5 +294,4 @@ final class CollectionBuilderTest extends TestCase
 
         return $version;
     }
-
 }

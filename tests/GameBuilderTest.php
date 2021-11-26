@@ -58,8 +58,7 @@ final class GameBuilderTest extends TestCase
         int             $expectedPollResultsCount,
         ?GameStatistics $expectedStats,
         string          $fixture
-    ): void
-    {
+    ): void {
         $builder = new GameBuilder();
         $response = file_get_contents(__DIR__ . $fixture);
         assert(is_string($response));
@@ -197,8 +196,7 @@ final class GameBuilderTest extends TestCase
         float $stdDev,
         float $median,
         array $ranks
-    ): GameStatistics
-    {
+    ): GameStatistics {
         $stats = new GameStatistics();
         $stats->ratings->usersRated = $usersRated;
         $stats->ratings->average = $average;

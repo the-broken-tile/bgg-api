@@ -42,7 +42,7 @@ final class UserBuilder implements ObjectBuilderInterface
         $user->firstName = $this->getStringValue($crawler, self::USER_FIRST_NAME);
         $user->lastName = $this->getStringValue($crawler, self::USER_LAST_NAME);
         $user->avatarLink = $this->getSTringValue($crawler, self::USER_AVATAR_LINK);
-        $user->yearRegistered = $this->getIntValue($crawler,self::USER_YEAR_REGISTERED);
+        $user->yearRegistered = $this->getIntValue($crawler, self::USER_YEAR_REGISTERED);
         $user->lastLogin = $this->getStringValue($crawler, self::USER_LAST_LOGIN);
         $user->stateOrProvince = $this->getStringValue($crawler, self::USER_STATE_OR_PROVINCE);
         $user->country = $this->getStringValue($crawler, self::USER_COUNTRY);

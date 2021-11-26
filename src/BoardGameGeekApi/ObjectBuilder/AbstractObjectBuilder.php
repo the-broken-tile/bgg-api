@@ -61,7 +61,6 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
         $polls = [];
         /** @var DOMElement $pollElement */
         foreach ($this->crawler->filter(self::POLL) as $pollElement) {
-
             $poll = new GamePoll(
                 $pollElement->getAttribute(self::NAME),
                 $pollElement->getAttribute(self::TITLE),
@@ -111,9 +110,9 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
         $stats->ratings->bayesAverage = (float) $ratingsCrawler->filter(self::BAYESIAN_AVERAGE)->attr(self::VALUE);
 
         //These three are set for collection and game with stats=1.
-        $stats->ratings->usersRated = $this->getIntAttribute($ratingsCrawler,self::USERS_RATED);
-        $stats->ratings->stdDev = $this->getFloatAttribute($ratingsCrawler,self::STANDARD_DEVIATION);
-        $stats->ratings->median = $this->getFloatAttribute($ratingsCrawler,self::MEDIAN);
+        $stats->ratings->usersRated = $this->getIntAttribute($ratingsCrawler, self::USERS_RATED);
+        $stats->ratings->stdDev = $this->getFloatAttribute($ratingsCrawler, self::STANDARD_DEVIATION);
+        $stats->ratings->median = $this->getFloatAttribute($ratingsCrawler, self::MEDIAN);
 
         //There rest are only set for game with stats=1.
         $stats->ratings->owned = $this->getIntAttribute($ratingsCrawler, self::OWNED);

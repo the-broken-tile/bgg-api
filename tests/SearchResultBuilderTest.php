@@ -35,8 +35,7 @@ final class SearchResultBuilderTest extends TestCase
         string   $expectedItemType,
         GameName $expectedItemName,
         int      $expectedItemYearPublished
-    ): void
-    {
+    ): void {
         $response = file_get_contents(__DIR__ . $fixture);
         assert(is_string($response));
         $builder = new SearchResultBuilder();

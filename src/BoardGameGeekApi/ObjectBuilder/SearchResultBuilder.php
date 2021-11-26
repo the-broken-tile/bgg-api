@@ -48,7 +48,7 @@ final class SearchResultBuilder extends AbstractObjectBuilder
                     $name->attr(self::TYPE),
                     $value,
                 ),
-                $yearPublished->count() ? (int) $yearPublished->attr(self::VALUE): null,
+                $yearPublished->count() ? (int) $yearPublished->attr(self::VALUE) : null,
             );
         }
 

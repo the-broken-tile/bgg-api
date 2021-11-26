@@ -19,7 +19,7 @@ final class ObjectBuilder implements ObjectBuilderManagerInterface
 
     public function build(RequestInterface $request, string $response): DataTransferObjectInterface
     {
-        foreach($this->builders as $builder) {
+        foreach ($this->builders as $builder) {
             if ($builder->supports($request)) {
                 return $builder->build($response);
             }

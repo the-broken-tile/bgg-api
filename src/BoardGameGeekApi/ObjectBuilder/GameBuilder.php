@@ -55,5 +55,4 @@ final class GameBuilder extends AbstractObjectBuilder
 
         return new Expansion();
     }
-
 }

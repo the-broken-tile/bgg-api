@@ -32,7 +32,8 @@ final class CollectionBuilder extends AbstractObjectBuilder
         $collection = new Collection();
         $crawler = new Crawler($response);
         $collection->totalItems = (int) $crawler->filter(self::ITEMS)->attr(self::TOTAL_ITEMS);
-        $pubDate = $crawler->filter(self::ITEMS)->attr(self::PUBLISH_DATE);;
+        $pubDate = $crawler->filter(self::ITEMS)->attr(self::PUBLISH_DATE);
+        ;
         assert(is_string($pubDate));
         $collection->pubDate = $pubDate;
 
