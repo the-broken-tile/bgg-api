@@ -9,6 +9,7 @@ return $config->setRules([
     '@DoctrineAnnotation' => true,
     '@PHP80Migration' => true,
     '@PHP80Migration:risky' => true,
+    '@PHP81Migration' => true,
     'strict_param' => true,
     'array_syntax' => ['syntax' => 'short'],
 ])
