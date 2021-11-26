@@ -5,7 +5,9 @@ $finder = PhpCsFixer\Finder::create()
 
 $config = new PhpCsFixer\Config();
 return $config->setRules([
+    '@PSR1' => true,
     '@PSR12' => true,
+    '@PSR12:risky' => true,
     '@DoctrineAnnotation' => true,
     '@PHP80Migration' => true,
     '@PHP80Migration:risky' => true,
