@@ -40,6 +40,9 @@
         "friendsofphp/php-cs-fixer": "^3.3"
     },
     "scripts": {
+        "post-install-cmd": [
+            "git config core.hooksPath .githookss"
+        ],
         "test": "./vendor/bin/phpunit -c ./tests/phpunit.xml",
         "phpstan": "./vendor/bin/phpstan analyse -c phpstan.neon",
         "fix": "./vendor/bin/php-cs-fixer fix --allow-risky=yes"
