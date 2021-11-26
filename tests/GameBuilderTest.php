@@ -65,7 +65,7 @@ final class GameBuilderTest extends TestCase
     ): void {
         $builder = new GameBuilder();
         $response = file_get_contents(__DIR__.$fixture);
-        assert(is_string($response));
+        \assert(\is_string($response));
 
         $game = $builder->build($response);
         self::assertInstanceOf(Game::class, $game);
@@ -93,7 +93,7 @@ final class GameBuilderTest extends TestCase
         // @todo rework poll results, they have different structure, current implementation doesn't support both.
         self::assertCount($expectedPollsCount, $game->polls);
         $poll = current($game->polls);
-        assert($poll instanceof GamePoll);
+        \assert($poll instanceof GamePoll);
         self::assertSame($expectedPollName, $poll->name);
         self::assertSame($expectedPollTitle, $poll->title);
         self::assertSame($expectedPollVotes, $poll->totalVotes);

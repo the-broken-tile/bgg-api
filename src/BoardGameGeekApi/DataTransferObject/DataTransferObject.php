@@ -6,9 +6,9 @@ namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
 abstract class DataTransferObject implements DataTransferObjectInterface
 {
-    use NameTrait;
-    use LinksTrait;
     use ImageTrait;
+    use LinksTrait;
+    use NameTrait;
 
     public int $id;
     public string $description;

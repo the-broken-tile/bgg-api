@@ -36,7 +36,7 @@ final class CollectionBuilder extends AbstractObjectBuilder
         $collection->totalItems = (int) $crawler->filter(self::ITEMS)->attr(self::TOTAL_ITEMS);
         $pubDate = $crawler->filter(self::ITEMS)->attr(self::PUBLISH_DATE);
 
-        assert(is_string($pubDate));
+        \assert(\is_string($pubDate));
         $collection->pubDate = $pubDate;
 
         $this->addItems($crawler, $collection);
@@ -124,7 +124,7 @@ final class CollectionBuilder extends AbstractObjectBuilder
         $status = $itemCrawler->filter(self::COLLECTION_STATUS);
 
         $lastModified = $status->attr(self::LAST_MODIFIED);
-        assert(is_string($lastModified));
+        \assert(\is_string($lastModified));
         $wishlistPriority = $status->attr(self::COLLECTION_WISHLIST_PRIORITY);
         $item->status = new CollectionStatus(
             (bool) $status->attr(self::COLLECTION_OWN),

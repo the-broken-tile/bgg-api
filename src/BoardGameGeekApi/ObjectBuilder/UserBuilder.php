@@ -38,7 +38,7 @@ final class UserBuilder implements ObjectBuilderInterface
         }
         $user->id = (int) $id;
         $name = $crawler->attr(self::NAME);
-        if (!is_string($name)) {
+        if (!\is_string($name)) {
             throw new InvalidResponseException('"name" should be a string');
         }
         $user->name = $name;

@@ -40,7 +40,7 @@ final class SearchResultBuilder extends AbstractObjectBuilder
             $name = $itemCrawler->filter(self::NAME)->eq(0);
             $yearPublished = $itemCrawler->filter(self::YEAR_PUBLISHED);
             $value = $name->attr(self::VALUE);
-            assert(is_string($value));
+            \assert(\is_string($value));
 
             $items[] = new SearchItem(
                 (int) $itemElement->getAttribute(self::ID),

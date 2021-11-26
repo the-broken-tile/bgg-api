@@ -63,7 +63,7 @@ final class CollectionBuilderTest extends TestCase
     ): void {
         $collectionBuilder = new CollectionBuilder();
         $response = file_get_contents(__DIR__.$fixture);
-        assert(is_string($response));
+        \assert(\is_string($response));
 
         $collection = $collectionBuilder->build($response);
         self::assertInstanceOf(Collection::class, $collection);

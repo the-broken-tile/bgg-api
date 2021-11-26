@@ -44,7 +44,7 @@ final class Client implements ClientInterface
 
             return $this->client->request(self::METHOD, $url)->getContent();
         });
-        assert(is_string($response));
+        \assert(\is_string($response));
 
         $thing = $this->builder->build($request, $response);
 
