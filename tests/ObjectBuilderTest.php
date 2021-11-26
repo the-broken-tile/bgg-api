@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\Test;
 
+use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterface;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilder;
-use PHPUnit\Framework\TestCase;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilderInterface;
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 /**
  * @coversDefaultClass \TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilder
+ *
+ * @internal
  */
 final class ObjectBuilderTest extends TestCase
 {
@@ -31,27 +33,33 @@ final class ObjectBuilderTest extends TestCase
         $supportedBuilder
             ->supports($request)
             ->shouldBeCalledOnce()
-            ->willReturn(true);
+            ->willReturn(true)
+        ;
         $supportedBuilder
             ->build($stringResponse)
-            ->willReturn($expectedResponse);
+            ->willReturn($expectedResponse)
+        ;
 
         $notSupportedBuilder = $this->prophesize(ObjectBuilderInterface::class);
         $notSupportedBuilder
             ->supports($request)
             ->shouldBeCalledOnce()
-            ->willReturn(false);
+            ->willReturn(false)
+        ;
         $notSupportedBuilder
             ->build($stringResponse)
-            ->shouldNotBeCalled();
+            ->shouldNotBeCalled()
+        ;
 
         $secondNotSupportedBuilder = $this->prophesize(ObjectBuilderInterface::class);
         $secondNotSupportedBuilder
             ->supports($request)
-            ->shouldNotBeCalled();
+            ->shouldNotBeCalled()
+        ;
         $secondNotSupportedBuilder
             ->build($stringResponse)
-            ->shouldNotBeCalled();
+            ->shouldNotBeCalled()
+        ;
 
         $builder = new ObjectBuilder([
             $notSupportedBuilder->reveal(),

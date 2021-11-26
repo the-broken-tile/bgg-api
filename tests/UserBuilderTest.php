@@ -14,6 +14,8 @@ use TheBrokenTile\BoardGameGeekApi\Request\UserRequest;
 
 /**
  * @coversDefaultClass \TheBrokenTile\BoardGameGeekApi\ObjectBuilder\UserBuilder
+ *
+ * @internal
  */
 final class UserBuilderTest extends TestCase
 {

@@ -6,9 +6,9 @@ namespace TheBrokenTile\BoardGameGeekApi\ObjectBuilder;
 
 use DOMElement;
 use Symfony\Component\DomCrawler\Crawler;
-use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserBuddy;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterface;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\User;
+use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserBuddy;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserGuild;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserHotItem;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserTopItem;
@@ -23,8 +23,9 @@ final class UserBuilder implements ObjectBuilderInterface
     }
 
     /**
-     * @return User
      * @throws InvalidResponseException
+     *
+     * @return User
      */
     public function build(string $response): DataTransferObjectInterface
     {
@@ -68,7 +69,7 @@ final class UserBuilder implements ObjectBuilderInterface
     private function addBuddies(Crawler $crawler, User $user): void
     {
         $buddies = $crawler->filter(self::USER_BUDDIES);
-        if ($buddies->count() === 0) {
+        if (0 === $buddies->count()) {
             return;
         }
         /** @var DOMElement $buddy */
@@ -83,7 +84,7 @@ final class UserBuilder implements ObjectBuilderInterface
     private function addGuilds(Crawler $crawler, User $user): void
     {
         $guilds = $crawler->filter(self::USER_GUILDS);
-        if ($guilds->count() === 0) {
+        if (0 === $guilds->count()) {
             return;
         }
 
@@ -99,7 +100,7 @@ final class UserBuilder implements ObjectBuilderInterface
     private function addTop(Crawler $crawler, User $user): void
     {
         $top = $crawler->filter(self::USER_TOP);
-        if ($top->count() === 0) {
+        if (0 === $top->count()) {
             return;
         }
         /** @var DOMElement $item */
@@ -116,7 +117,7 @@ final class UserBuilder implements ObjectBuilderInterface
     private function addHot(Crawler $crawler, User $user): void
     {
         $hot = $crawler->filter(self::USER_HOT);
-        if ($hot->count() === 0) {
+        if (0 === $hot->count()) {
             return;
         }
 
@@ -137,7 +138,7 @@ final class UserBuilder implements ObjectBuilderInterface
     private function getStringValue(Crawler $crawler, string $selector): string
     {
         $value = $crawler->filter($selector)->attr(self::VALUE);
-        if ($value === null) {
+        if (null === $value) {
             throw new InvalidResponseException(sprintf('"%s" is required', $selector));
         }
 
@@ -150,7 +151,7 @@ final class UserBuilder implements ObjectBuilderInterface
     private function getIntValue(Crawler $crawler, string $selector): int
     {
         $value = $crawler->filter($selector)->attr(self::VALUE);
-        if ($value === null) {
+        if (null === $value) {
             throw new InvalidResponseException(sprintf('"%s" is required', $selector));
         }
 

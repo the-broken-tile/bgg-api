@@ -19,6 +19,8 @@ use TheBrokenTile\BoardGameGeekApi\Request\UserRequest;
 
 /**
  * @coversDefaultClass \TheBrokenTile\BoardGameGeekApi\ObjectBuilder\CollectionBuilder
+ *
+ * @internal
  */
 final class CollectionBuilderTest extends TestCase
 {
@@ -36,30 +38,31 @@ final class CollectionBuilderTest extends TestCase
 
     /**
      * @covers ::build
+     *
      * @param GameName[] $itemNames
      * @dataProvider buildDataProvider
      */
     public function testBuild(
-        int                $itemIndex,
-        string             $fixture,
-        string             $pubDate,
-        int                $totalItems,
-        string             $itemType,
-        int                $itemId,
-        string             $itemSubType,
-        int                $itemCollectionId,
-        ?string            $itemImage,
-        ?string            $itemThumbnail,
-        array              $itemNames,
-        CollectionStatus   $itemStatus,
-        ?int               $itemYearPublished,
-        ?int               $itemNumberOfPlays,
-        ?string            $itemComment,
+        int $itemIndex,
+        string $fixture,
+        string $pubDate,
+        int $totalItems,
+        string $itemType,
+        int $itemId,
+        string $itemSubType,
+        int $itemCollectionId,
+        ?string $itemImage,
+        ?string $itemThumbnail,
+        array $itemNames,
+        CollectionStatus $itemStatus,
+        ?int $itemYearPublished,
+        ?int $itemNumberOfPlays,
+        ?string $itemComment,
         ?CollectionVersion $itemVersion,
-        ?GameStatistics    $itemStats
+        ?GameStatistics $itemStats
     ): void {
         $collectionBuilder = new CollectionBuilder();
-        $response = file_get_contents(__DIR__ . $fixture);
+        $response = file_get_contents(__DIR__.$fixture);
         assert(is_string($response));
 
         $collection = $collectionBuilder->build($response);
@@ -96,17 +99,17 @@ final class CollectionBuilderTest extends TestCase
     {
         $base = [
             'itemIndex' => 0,
-            'fixture' => null,//placeholder
-            'pubDate' => null,//placeholder
+            'fixture' => null, //placeholder
+            'pubDate' => null, //placeholder
             'totalItems' => 480,
             'itemType' => 'thing',
-            'itemId' => null,//placeholder
+            'itemId' => null, //placeholder
             'itemSubType' => 'boardgame',
-            'itemCollectionId' => null,//placeholder
+            'itemCollectionId' => null, //placeholder
             'itemImage' => null,
             'itemThumbnail' => null,
-            'itemNames' => null,//placeholder
-            'itemStatus' => null,//placeholder
+            'itemNames' => null, //placeholder
+            'itemStatus' => null, //placeholder
             'itemYearPublished' => null,
             'itemNumberOfPlays' => null,
             'itemComment' => null,
@@ -264,9 +267,9 @@ final class CollectionBuilderTest extends TestCase
      * @param GameRank[] $ranks
      */
     private function buildStatistics(
-        ?int   $usersRated,
-        float  $average,
-        float  $bayesAverage,
+        ?int $usersRated,
+        float $average,
+        float $bayesAverage,
         ?float $stdDev,
         ?float $median,
         array $ranks

@@ -12,7 +12,9 @@ return $config->setRules([
     '@PHP80Migration' => true,
     '@PHP80Migration:risky' => true,
     '@PHP81Migration' => true,
+    '@PhpCsFixer' => true,
     'strict_param' => true,
     'array_syntax' => ['syntax' => 'short'],
+    'php_unit_test_class_requires_covers' => false, // PhpCsFixer ignores coversDefaultClass
 ])
     ->setFinder($finder);

@@ -11,9 +11,9 @@ use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilderManagerInterface;
 
 final class Client implements ClientInterface
 {
+    public const CACHE_TAG_PREFIX = 'the_broken_tile';
     private const METHOD = 'GET';
     private const TYPE_PREFIX = 'api_type_';
-    public const CACHE_TAG_PREFIX = 'the_broken_tile';
 
     private HttpClientInterface $client;
     private TagAwareCacheInterface $cache;

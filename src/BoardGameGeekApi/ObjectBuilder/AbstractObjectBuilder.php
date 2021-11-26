@@ -101,7 +101,7 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
     protected function getStats(Crawler $crawler): ?GameStatistics
     {
         $statsCrawler = $crawler->filter($this->statsKey);
-        if ($statsCrawler->count() === 0) {
+        if (0 === $statsCrawler->count()) {
             return null;
         }
         $stats = new GameStatistics();
@@ -132,25 +132,27 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
     protected function getIntAttribute(Crawler $crawler, string $selector): ?int
     {
         $subCrawler = $crawler->filter($selector);
-        if ($subCrawler->count() === 0) {
+        if (0 === $subCrawler->count()) {
             return null;
         }
+
         return (int) $subCrawler->attr(self::VALUE);
     }
 
     private function getFloatAttribute(Crawler $crawler, string $selector): ?float
     {
         $subCrawler = $crawler->filter($selector);
-        if ($subCrawler->count() === 0) {
+        if (0 === $subCrawler->count()) {
             return null;
         }
+
         return (float) $subCrawler->attr(self::VALUE);
     }
 
     private function addRanks(GameRatings $ratings, Crawler $ratingsCrawler): void
     {
         $ranks = $ratingsCrawler->filter(self::RANKS);
-        if ($ranks->count() === 0) {
+        if (0 === $ranks->count()) {
             return;
         }
 

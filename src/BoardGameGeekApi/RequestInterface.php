@@ -58,7 +58,7 @@ interface RequestInterface
 
     /**
      * ?rating=[1-10]
-     * Filter on maximum personal rating assigned for that item in the collection. [Note: Although you'd expect it to be maxrating, it's rating.]
+     * Filter on maximum personal rating assigned for that item in the collection. [Note: Although you'd expect it to be maxrating, it's rating.].
      */
     public const PARAM_COLLECTION_FILTER_RATING = 'rating';
 
@@ -71,7 +71,7 @@ interface RequestInterface
 
     /**
      * ?bggrating=[1-10]
-     * Filter on maximum BGG rating for that item in the collection. [Note: Although you'd expect it to be maxbggrating, it's bggrating.]
+     * Filter on maximum BGG rating for that item in the collection. [Note: Although you'd expect it to be maxbggrating, it's bggrating.].
      */
     public const PARAM_COLLECTION_FILTER_BGG_RATING = 'bggrating';
 
@@ -84,13 +84,13 @@ interface RequestInterface
     /**
      * ?maxplays=NNN
      * Filter by maximum number of recorded plays.
-     * [Note: Although the two maxima parameters above lack the max part, this one really is maxplays.]
+     * [Note: Although the two maxima parameters above lack the max part, this one really is maxplays.].
      */
     public const PARAM_COLLECTION_MAX_PLAYS = 'maxplays';
 
     /**
      * Filter to show private collection info. Only works when viewing your own collection and you are logged in.
-     * This will probably never be implemented here
+     * This will probably never be implemented here.
      */
     public const PARAM_COLLECTION_SHOW_PRIVATE = 'showprivate';
 
@@ -104,12 +104,12 @@ interface RequestInterface
      * ?modifiedsince=YY-MM-DD
      * Restricts the collection results to only those whose status (own, want, fortrade, etc.)
      * has changed or been added since the date specified (does not return results for deletions).
-     * Time may be added as well: modifiedsince=YY-MM-DD%20HH:MM:SS
+     * Time may be added as well: modifiedsince=YY-MM-DD%20HH:MM:SS.
      */
     public const PARAM_COLLECTION_MODIFIED_SINCE = 'modifiedsince';
 
     public function getType(): string;
 
-    /** @return array<string, bool|float|int|string|null> */
+    /** @return array<string, null|bool|float|int|string> */
     public function getParams(): array;
 }

@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\Test;
 
+use PHPUnit\Framework\TestCase;
 use TheBrokenTile\BoardGameGeekApi\Request\CollectionRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\GameRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\SearchRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\UserRequest;
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 use TheBrokenTile\BoardGameGeekApi\UrlGenerator;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass \TheBrokenTile\BoardGameGeekApi\UrlGenerator
+ *
+ * @internal
  */
 final class UrlGeneratorTest extends TestCase
 {

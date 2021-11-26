@@ -12,7 +12,7 @@ final class CollectionRequest implements RequestInterface
     private ?bool $version = null;
     private ?bool $brief = null;
     private ?bool $stats = null;
-    /** @var array<string, bool|string|int> */
+    /** @var array<string, bool|int|string> */
     private array $filters = [];
 
     public function __construct(string $username)
@@ -44,7 +44,7 @@ final class CollectionRequest implements RequestInterface
 
     /**
      * Returns more abbreviated results.
-     * Only returns name and status
+     * Only returns name and status.
      */
     public function brief(): self
     {
@@ -61,7 +61,7 @@ final class CollectionRequest implements RequestInterface
     }
 
     /**
-     * @param string|bool|int $value
+     * @param bool|int|string $value
      */
     public function filter(string $name, $value): self
     {

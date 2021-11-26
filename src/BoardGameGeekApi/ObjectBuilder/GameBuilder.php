@@ -19,7 +19,7 @@ final class GameBuilder extends AbstractObjectBuilder
     }
 
     /**
-     * @return Game|Expansion
+     * @return Expansion|Game
      */
     public function build(string $response): DataTransferObject
     {
@@ -47,7 +47,7 @@ final class GameBuilder extends AbstractObjectBuilder
     }
 
     /**
-     * @return Game|Expansion
+     * @return Expansion|Game
      */
     private function createObject(string $response): DataTransferObject
     {
