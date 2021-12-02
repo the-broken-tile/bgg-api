@@ -19,7 +19,7 @@ final class SearchResultBuilder extends AbstractObjectBuilder
         return $request instanceof SearchRequest;
     }
 
-    public function build(string $response): SearchResults
+    public function build(string $response, RequestInterface $request): SearchResults
     {
         $crawler = new Crawler($response);
         $items = $crawler->filter(self::ITEMS)->eq(0);

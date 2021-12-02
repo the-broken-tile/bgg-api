@@ -44,7 +44,9 @@ final class ClientTest extends TestCase
         $request->getParams()->willReturn([]);
         $request = $request->reveal();
 
-        $thing = $this->prophesize(DataTransferObjectInterface::class)->reveal();
+        $thing = $this->prophesize(DataTransferObjectInterface::class);
+        $thing->getTotalItems()->willReturn(1);
+        $thing = $thing->reveal();
 
         $objectBuilder->build($request, $stringResponse)
             ->shouldBeCalledOnce()

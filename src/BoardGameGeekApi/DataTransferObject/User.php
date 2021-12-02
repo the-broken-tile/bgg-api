@@ -31,4 +31,9 @@ final class User implements DataTransferObjectInterface
     public array $hot = [];
     /** @var UserTopItem[] */
     public array $top = [];
+
+    public function getTotalItems(): int
+    {
+        return 1;
+    }
 }

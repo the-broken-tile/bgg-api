@@ -29,7 +29,7 @@ final class CollectionBuilder extends AbstractObjectBuilder
     /**
      * @return Collection
      */
-    public function build(string $response): DataTransferObjectInterface
+    public function build(string $response, RequestInterface $request): DataTransferObjectInterface
     {
         $collection = new Collection();
         $crawler = new Crawler($response);

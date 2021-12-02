@@ -6,4 +6,5 @@ namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
 interface DataTransferObjectInterface
 {
+    public function getTotalItems(): int;
 }

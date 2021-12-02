@@ -23,7 +23,7 @@ final class ObjectBuilder implements ObjectBuilderManagerInterface
     {
         foreach ($this->builders as $builder) {
             if ($builder->supports($request)) {
-                return $builder->build($response);
+                return $builder->build($response, $request);
             }
         }
 

@@ -8,6 +8,7 @@ use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\GameBuilder;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilder;
+use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\RetryExactSearchBuilder;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\SearchResultBuilder;
 use TheBrokenTile\BoardGameGeekApi\Request\GameRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\SearchRequest;
@@ -20,13 +21,16 @@ if (count($argv) < 2) {
 
 $query = $argv[1];
 
+$searchResultBuilder = new SearchResultBuilder();
+
 $client = new Client(
     new CurlHttpClient(),
     new TagAwareAdapter(
         new FilesystemAdapter(),
     ),
     new ObjectBuilder([
-        new SearchResultBuilder(),
+        $searchResultBuilder,
+        new RetryExactSearchBuilder($searchResultBuilder),
     ]),
     new UrlGenerator(),
 );

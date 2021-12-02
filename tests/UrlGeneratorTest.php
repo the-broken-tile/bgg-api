@@ -66,6 +66,10 @@ final class UrlGeneratorTest extends TestCase
                 'https://api.geekdo.com/xmlapi2/user?name=tazzadar1337&page=1',
                 new UserRequest('tazzadar1337'),
             ],
+            'trim semicolons' => [
+                'https://api.geekdo.com/xmlapi2/search?query=Doomtown+Reloaded&exact=1&type=boardgame',
+                new SearchRequest('Doomtown: Reloaded', true),
+            ],
         ];
     }
 }

@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace TheBrokenTile\Test;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameName;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\SearchItem;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\SearchResultBuilder;
 use TheBrokenTile\BoardGameGeekApi\Request\GameRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\SearchRequest;
+use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 /**
  * @coversDefaultClass \TheBrokenTile\BoardGameGeekApi\ObjectBuilder\SearchResultBuilder
@@ -18,6 +20,8 @@ use TheBrokenTile\BoardGameGeekApi\Request\SearchRequest;
  */
 final class SearchResultBuilderTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @covers ::supports
      */
@@ -44,7 +48,7 @@ final class SearchResultBuilderTest extends TestCase
         \assert(\is_string($response));
         $builder = new SearchResultBuilder();
 
-        $searchResults = $builder->build($response);
+        $searchResults = $builder->build($response, $this->prophesize(RequestInterface::class)->reveal());
         self::assertSame($expectedTotal, $searchResults->total);
         self::assertCount($expectedTotal, $searchResults->items);
 

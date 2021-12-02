@@ -113,5 +113,5 @@ interface ObjectBuilderInterface
 
     public function supports(RequestInterface $request): bool;
 
-    public function build(string $response): DataTransferObjectInterface;
+    public function build(string $response, RequestInterface $request): DataTransferObjectInterface;
 }

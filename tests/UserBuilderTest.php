@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace TheBrokenTile\Test\BoardGameGeekApi\ObjectBuilder;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\User;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserBuddy;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserHotItem;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\UserBuilder;
 use TheBrokenTile\BoardGameGeekApi\Request\SearchRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\UserRequest;
+use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 /**
  * @coversDefaultClass \TheBrokenTile\BoardGameGeekApi\ObjectBuilder\UserBuilder
@@ -19,6 +21,8 @@ use TheBrokenTile\BoardGameGeekApi\Request\UserRequest;
  */
 final class UserBuilderTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @covers ::suppports
      */
@@ -39,7 +43,7 @@ final class UserBuilderTest extends TestCase
         $response = file_get_contents(__DIR__.'/fixtures/user.xml');
         \assert(\is_string($response));
 
-        $user = $userBuilder->build($response);
+        $user = $userBuilder->build($response, $this->prophesize(RequestInterface::class)->reveal());
         self::assertInstanceOf(User::class, $user);
         self::assertSame(844486, $user->id);
         self::assertSame('tazzadar1337', $user->name);

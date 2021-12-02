@@ -8,13 +8,12 @@ use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 final class GameRequest implements RequestInterface
 {
-    /** @var int[] */
-    private array $id;
-    private ?bool $stats = null;
+    private string $id;
+    private ?string $stats = null;
 
     public function __construct(int ...$ids)
     {
-        $this->id = $ids;
+        $this->id = implode(self::PARAM_VALUE_SEPARATOR, $ids);
     }
 
     public function getType(): string
@@ -24,15 +23,15 @@ final class GameRequest implements RequestInterface
 
     public function getParams(): array
     {
-        return [
-            self::PARAM_ID => implode(self::PARAM_VALUE_SEPARATOR, $this->id),
+        return array_filter([
+            self::PARAM_ID => $this->id,
             self::PARAM_STATS => $this->stats,
-        ];
+        ]);
     }
 
     public function stats(): self
     {
-        $this->stats = true;
+        $this->stats = '1';
 
         return $this;
     }

@@ -10,4 +10,9 @@ final class Collection implements DataTransferObjectInterface
     public string $pubDate;
     /** @var CollectionItem[] */
     public array $items = [];
+
+    public function getTotalItems(): int
+    {
+        return $this->totalItems;
+    }
 }
