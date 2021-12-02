@@ -16,7 +16,7 @@ if (count($argv) < 2) {
     throw new RunTimeException('First argument is required');
 }
 
-$id = (int) $argv[1];
+$ids = explode(RequestInterface::PARAM_VALUE_SEPARATOR, $argv[1]);
 $stats = (bool) ($argv[2] ?? false);
 
 $client = new Client(
@@ -30,7 +30,7 @@ $client = new Client(
     new UrlGenerator(),
 );
 
-$request = new GameRequest($id);
+$request = new GameRequest(...$ids);
 if ($stats) {
     $request->stats();
 }

@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\BoardGameGeekApi\ObjectBuilder;
 
+use DOMElement;
 use Symfony\Component\DomCrawler\Crawler;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObject;
+use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterface;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\Expansion;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\Game;
+use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameResults;
 use TheBrokenTile\BoardGameGeekApi\Request\GameRequest;
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
@@ -19,39 +22,49 @@ final class GameBuilder extends AbstractObjectBuilder
     }
 
     /**
-     * @return Expansion|Game
+     * @return GameResults
      */
-    public function build(string $response): DataTransferObject
+    public function build(string $response): DataTransferObjectInterface
     {
-        $this->crawler = (new Crawler($response))->filter(self::ITEM)->eq(0);
+        $results = new GameResults();
+        $crawler = new Crawler($response);
 
-        $object = $this->createObject($response);
+        /** @var DOMElement $item */
+        foreach ($crawler->filter(self::ITEM) as $item) {
+            $itemCrawler = new Crawler($item);
+            $results->items[] = $this->buildItem($itemCrawler);
+            ++$results->total;
+        }
 
-        $object->id = $this->getId();
-        $object->thumbnail = $this->getThumbnail();
-        $object->image = $this->getImage();
-        $object->names = $this->getNames();
-        $object->description = $this->getDescription();
-        $object->yearPublished = $this->getIntAttribute($this->crawler, self::YEAR_PUBLISHED);
-        $object->minPlayers = $this->getIntAttribute($this->crawler, self::MIN_PLAYERS);
-        $object->maxPlayers = $this->getIntAttribute($this->crawler, self::MAX_PLAYERS);
-        $object->polls = $this->getPolls();
-        $object->playingTime = $this->getIntAttribute($this->crawler, self::PLAYING_TIME);
-        $object->minPlayTime = $this->getIntAttribute($this->crawler, self::MIN_PLAY_TIME);
-        $object->maxPlayTime = $this->getIntAttribute($this->crawler, self::MAX_PLAY_TIME);
-        $object->minAge = $this->getIntAttribute($this->crawler, self::MIN_AGE);
-        $object->links = $this->getLinks();
-        $object->stats = $this->getStats($this->crawler);
+        return $results;
+    }
+
+    private function buildItem(Crawler $crawler): DataTransferObject
+    {
+        $object = $this->createObject($crawler);
+
+        $object->id = $this->getId($crawler);
+        $object->thumbnail = $this->getThumbnail($crawler);
+        $object->image = $this->getImage($crawler);
+        $object->names = $this->getNames($crawler);
+        $object->description = $this->getDescription($crawler);
+        $object->yearPublished = $this->getIntAttribute($crawler, self::YEAR_PUBLISHED);
+        $object->minPlayers = $this->getIntAttribute($crawler, self::MIN_PLAYERS);
+        $object->maxPlayers = $this->getIntAttribute($crawler, self::MAX_PLAYERS);
+        $object->polls = $this->getPolls($crawler);
+        $object->playingTime = $this->getIntAttribute($crawler, self::PLAYING_TIME);
+        $object->minPlayTime = $this->getIntAttribute($crawler, self::MIN_PLAY_TIME);
+        $object->maxPlayTime = $this->getIntAttribute($crawler, self::MAX_PLAY_TIME);
+        $object->minAge = $this->getIntAttribute($crawler, self::MIN_AGE);
+        $object->links = $this->getLinks($crawler);
+        $object->stats = $this->getStats($crawler);
 
         return $object;
     }
 
-    /**
-     * @return Expansion|Game
-     */
-    private function createObject(string $response): DataTransferObject
+    private function createObject(Crawler $crawler): DataTransferObject
     {
-        if (str_contains($response, '<item type="boardgame"')) {
+        if ('boardgame' === $crawler->attr(self::TYPE)) {
             return new Game();
         }
 
