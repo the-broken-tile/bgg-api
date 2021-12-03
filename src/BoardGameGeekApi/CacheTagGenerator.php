@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\BoardGameGeekApi;
 
 final class CacheTagGenerator implements CacheTagGeneratorInterface

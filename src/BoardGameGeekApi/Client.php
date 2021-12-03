@@ -28,7 +28,6 @@ final class Client implements ClientInterface
         ObjectBuilderManagerInterface $gameBuilder,
         UrlGeneratorInterface $urlGenerator,
         CacheTagGeneratorInterface $cacheTagGenerator
-
     ) {
         $this->client = $client;
         $this->cache = $cache;

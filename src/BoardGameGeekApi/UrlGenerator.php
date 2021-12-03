@@ -40,11 +40,14 @@ final class UrlGenerator implements UrlGeneratorInterface
     private function fixValues(array $params): array
     {
         foreach ($params as $key => $value) {
+            \assert(\is_string($value));
             if (isset($this->valueFixes[$key])) {
                 /** @var string $pattern */
                 /** @var string $replace */
                 [$pattern, $replace] = $this->valueFixes[$key];
-                $params[$key] = preg_replace($pattern, $replace, $value);
+                $fixed = preg_replace($pattern, $replace, $value);
+                \assert(\is_string($fixed));
+                $params[$key] = $fixed;
             }
         }
 

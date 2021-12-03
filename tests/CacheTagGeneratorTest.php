@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBrokenTile\Test\BoardGameGeekApi;
 
-use TheBrokenTile\BoardGameGeekApi\CacheTagGenerator;
 use PHPUnit\Framework\TestCase;
+use TheBrokenTile\BoardGameGeekApi\CacheTagGenerator;
 use TheBrokenTile\BoardGameGeekApi\Request\CollectionRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\GameRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\RetrySearchRequest;
@@ -13,11 +15,13 @@ use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 /**
  * @covers \TheBrokenTile\BoardGameGeekApi\CacheTagGenerator
+ *
+ * @internal
  */
 final class CacheTagGeneratorTest extends TestCase
 {
-
     /**
+     * @param string[] $expected
      * @dataProvider dataProvider
      */
     public function testGenerateTags(array $expected, RequestInterface $request): void
@@ -33,6 +37,7 @@ final class CacheTagGeneratorTest extends TestCase
     public function dataProvider(): array
     {
         $searchRequest = new SearchRequest('Aye, Dark Overlord!', true);
+
         return [
             'collection request' => [
                 ['the_broken_tile.api_type_collection', 'the_broken_tile.username_tazzadar1337'],
@@ -53,7 +58,7 @@ final class CacheTagGeneratorTest extends TestCase
             'user request' => [
                 ['the_broken_tile.api_type_user', 'the_broken_tile.name_tazzadar1337', 'the_broken_tile.buddies_1', 'the_broken_tile.page_3', 'the_broken_tile.hot_1'],
                 (new UserRequest('tazzadar1337'))->buddies()->hot()->page(3),
-            ]
+            ],
         ];
     }
 }
