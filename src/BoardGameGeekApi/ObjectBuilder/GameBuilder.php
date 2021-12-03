@@ -24,7 +24,7 @@ final class GameBuilder extends AbstractObjectBuilder
     /**
      * @return GameResults
      */
-    public function build(string $response): DataTransferObjectInterface
+    public function build(string $response, RequestInterface $request): DataTransferObjectInterface
     {
         $results = new GameResults();
         $crawler = new Crawler($response);

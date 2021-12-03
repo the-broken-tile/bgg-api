@@ -111,6 +111,6 @@ interface RequestInterface
 
     public function getType(): string;
 
-    /** @return array<string, null|bool|float|int|string> */
+    /** @return array<string, string> */
     public function getParams(): array;
 }

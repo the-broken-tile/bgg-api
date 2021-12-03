@@ -36,7 +36,7 @@ final class ObjectBuilderTest extends TestCase
             ->willReturn(true)
         ;
         $supportedBuilder
-            ->build($stringResponse)
+            ->build($stringResponse, $request)
             ->willReturn($expectedResponse)
         ;
 
@@ -47,7 +47,7 @@ final class ObjectBuilderTest extends TestCase
             ->willReturn(false)
         ;
         $notSupportedBuilder
-            ->build($stringResponse)
+            ->build($stringResponse, $request)
             ->shouldNotBeCalled()
         ;
 
@@ -57,7 +57,7 @@ final class ObjectBuilderTest extends TestCase
             ->shouldNotBeCalled()
         ;
         $secondNotSupportedBuilder
-            ->build($stringResponse)
+            ->build($stringResponse, $request)
             ->shouldNotBeCalled()
         ;
 

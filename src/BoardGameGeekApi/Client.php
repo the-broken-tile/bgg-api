@@ -8,6 +8,7 @@ use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilderManagerInterface;
+use TheBrokenTile\BoardGameGeekApi\Request\RetryRequestInterface;
 
 final class Client implements ClientInterface
 {
@@ -47,6 +48,9 @@ final class Client implements ClientInterface
         \assert(\is_string($response));
 
         $thing = $this->builder->build($request, $response);
+        if (0 === $thing->getTotalItems() && $request instanceof RetryRequestInterface && $retryRequest = $request->getRetryRequest()) {
+            return $this->request($retryRequest);
+        }
 
         return new Response($thing);
     }

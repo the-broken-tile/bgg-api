@@ -27,7 +27,7 @@ final class UserBuilder implements ObjectBuilderInterface
      *
      * @return User
      */
-    public function build(string $response): DataTransferObjectInterface
+    public function build(string $response, RequestInterface $request): DataTransferObjectInterface
     {
         $user = new User();
         $crawler = (new Crawler($response))->filter(self::USER)->eq(0);

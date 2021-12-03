@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace TheBrokenTile\Test;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\Game;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameLink;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameName;
@@ -14,6 +15,7 @@ use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameStatistics;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\GameBuilder;
 use TheBrokenTile\BoardGameGeekApi\Request\GameRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\SearchRequest;
+use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 /**
  * @coversDefaultCLass \TheBrokenTile\BoardGameGeekApi\ObjectBuilder\GameBuilder
@@ -22,6 +24,8 @@ use TheBrokenTile\BoardGameGeekApi\Request\SearchRequest;
  */
 final class GameBuilderTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @covers ::supports
      */
@@ -69,11 +73,10 @@ final class GameBuilderTest extends TestCase
         $response = file_get_contents(__DIR__.$fixture);
         \assert(\is_string($response));
 
-        $results = $builder->build($response);
+        $results = $builder->build($response, $this->prophesize(RequestInterface::class)->reveal());
         self::assertSame($expectedTotal, $results->total);
         $game = $results->items[$gameIndex];
         \assert($game instanceof Game);
-
         self::assertSame($expectedId, $game->id);
         self::assertSame($expectedImage, $game->image);
         self::assertSame($expectedThumbnail, $game->thumbnail);

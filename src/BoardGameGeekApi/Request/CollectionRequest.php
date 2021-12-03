@@ -9,10 +9,10 @@ use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 final class CollectionRequest implements RequestInterface
 {
     private string $username;
-    private ?bool $version = null;
-    private ?bool $brief = null;
-    private ?bool $stats = null;
-    /** @var array<string, bool|int|string> */
+    private ?string $version = null;
+    private ?string $brief = null;
+    private ?string $stats = null;
+    /** @var array<string, string> */
     private array $filters = [];
 
     public function __construct(string $username)
@@ -27,17 +27,17 @@ final class CollectionRequest implements RequestInterface
 
     public function getParams(): array
     {
-        return array_merge([
+        return array_filter(array_merge([
             self::PARAM_COLLECTION_USERNAME => $this->username,
             self::PARAM_COLLECTION_VERSION => $this->version,
             self::PARAM_COLLECTION_BRIEF => $this->brief,
             self::PARAM_STATS => $this->stats,
-        ], $this->filters);
+        ], $this->filters));
     }
 
     public function version(): self
     {
-        $this->version = true;
+        $this->version = '1';
 
         return $this;
     }
@@ -48,14 +48,14 @@ final class CollectionRequest implements RequestInterface
      */
     public function brief(): self
     {
-        $this->brief = true;
+        $this->brief = '1';
 
         return $this;
     }
 
     public function stats(): self
     {
-        $this->stats = true;
+        $this->stats = '1';
 
         return $this;
     }
@@ -65,6 +65,16 @@ final class CollectionRequest implements RequestInterface
      */
     public function filter(string $name, $value): self
     {
+        if (\is_bool($value)) {
+            $this->filters[$name] = $value ? '1' : '0';
+
+            return $this;
+        }
+        if (\is_int($value)) {
+            $this->filters[$name] = (string) $value;
+
+            return $this;
+        }
         $this->filters[$name] = $value;
 
         return $this;

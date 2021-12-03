@@ -25,4 +25,9 @@ abstract class DataTransferObject implements DataTransferObjectInterface
     public ?int $maxPlayTime;
     public ?int $minAge;
     public ?GameStatistics $stats;
+
+    public function getTotalItems(): int
+    {
+        return 1;
+    }
 }

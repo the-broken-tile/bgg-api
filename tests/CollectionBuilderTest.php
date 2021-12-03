@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace TheBrokenTile\Test;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\Collection;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\CollectionItem;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\CollectionStatus;
@@ -16,6 +17,7 @@ use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameStatistics;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\CollectionBuilder;
 use TheBrokenTile\BoardGameGeekApi\Request\CollectionRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\UserRequest;
+use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 /**
  * @coversDefaultClass \TheBrokenTile\BoardGameGeekApi\ObjectBuilder\CollectionBuilder
@@ -24,6 +26,8 @@ use TheBrokenTile\BoardGameGeekApi\Request\UserRequest;
  */
 final class CollectionBuilderTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @covers ::supports
      */
@@ -65,7 +69,7 @@ final class CollectionBuilderTest extends TestCase
         $response = file_get_contents(__DIR__.$fixture);
         \assert(\is_string($response));
 
-        $collection = $collectionBuilder->build($response);
+        $collection = $collectionBuilder->build($response, $this->prophesize(RequestInterface::class)->reveal());
         self::assertInstanceOf(Collection::class, $collection);
 
         self::assertSame($totalItems, $collection->totalItems);
