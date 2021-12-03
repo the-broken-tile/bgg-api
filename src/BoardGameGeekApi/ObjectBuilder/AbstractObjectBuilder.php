@@ -18,30 +18,29 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
 {
     protected string $statsKey = self::STATISTICS;
     protected string $ratingsKey = self::RATINGS;
-    protected Crawler $crawler;
 
-    protected function getId(): int
+    protected function getId(Crawler $crawler): int
     {
-        return (int) $this->crawler->attr(self::ID);
+        return (int) $crawler->attr(self::ID);
     }
 
-    protected function getThumbnail(): string
+    protected function getThumbnail(Crawler $crawler): string
     {
-        return $this->crawler->filter(self::THUMBNAIL)->text();
+        return $crawler->filter(self::THUMBNAIL)->text();
     }
 
-    protected function getImage(): string
+    protected function getImage(Crawler $crawler): string
     {
-        return $this->crawler->filter(self::IMAGE)->text();
+        return $crawler->filter(self::IMAGE)->text();
     }
 
     /** @return GameName[] */
-    protected function getNames(): array
+    protected function getNames(Crawler $crawler): array
     {
         $names = [];
 
         /** @var DOMElement $name */
-        foreach ($this->crawler->filter(self::NAME) as $name) {
+        foreach ($crawler->filter(self::NAME) as $name) {
             $names[] = new GameName(
                 (int) $name->getAttribute(self::SORT_INDEX),
                 $name->getAttribute(self::TYPE),
@@ -52,17 +51,17 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
         return $names;
     }
 
-    protected function getDescription(): string
+    protected function getDescription(Crawler $crawler): string
     {
-        return $this->crawler->filter(self::DESCRIPTION)->text();
+        return $crawler->filter(self::DESCRIPTION)->text();
     }
 
     /** @return GamePoll[] */
-    protected function getPolls(): array
+    protected function getPolls(Crawler $crawler): array
     {
         $polls = [];
         /** @var DOMElement $pollElement */
-        foreach ($this->crawler->filter(self::POLL) as $pollElement) {
+        foreach ($crawler->filter(self::POLL) as $pollElement) {
             $poll = new GamePoll(
                 $pollElement->getAttribute(self::NAME),
                 $pollElement->getAttribute(self::TITLE),
@@ -83,11 +82,11 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
     }
 
     /** @return GameLink[] */
-    protected function getLinks(): array
+    protected function getLinks(Crawler $crawler): array
     {
         $links = [];
         /** @var DOMElement $linkElement */
-        foreach ($this->crawler->filter(self::LINK) as $linkElement) {
+        foreach ($crawler->filter(self::LINK) as $linkElement) {
             $links[] = new GameLink(
                 (int) $linkElement->getAttribute(self::ID),
                 $linkElement->getAttribute(self::TYPE),

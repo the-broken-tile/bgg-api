@@ -10,6 +10,7 @@ interface RequestInterface
     public const TYPE_SEARCH = 'search';
     public const TYPE_USER = 'user';
     public const TYPE_COLLECTION = 'collection';
+    public const PARAM_VALUE_SEPARATOR = ',';
 
     public const PARAM_PAGE = 'page';
     /**

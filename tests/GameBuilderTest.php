@@ -38,6 +38,7 @@ final class GameBuilderTest extends TestCase
      * @dataProvider buildDataProvider
      */
     public function testBuild(
+        string $fixture,
         int $expectedId,
         string $expectedImage,
         string $expectedThumbnail,
@@ -61,14 +62,18 @@ final class GameBuilderTest extends TestCase
         int $expectedPollVotes,
         int $expectedPollResultsCount,
         ?GameStatistics $expectedStats,
-        string $fixture
+        int $expectedTotal,
+        int $gameIndex
     ): void {
         $builder = new GameBuilder();
         $response = file_get_contents(__DIR__.$fixture);
         \assert(\is_string($response));
 
-        $game = $builder->build($response);
-        self::assertInstanceOf(Game::class, $game);
+        $results = $builder->build($response);
+        self::assertSame($expectedTotal, $results->total);
+        $game = $results->items[$gameIndex];
+        \assert($game instanceof Game);
+
         self::assertSame($expectedId, $game->id);
         self::assertSame($expectedImage, $game->image);
         self::assertSame($expectedThumbnail, $game->thumbnail);
@@ -108,6 +113,7 @@ final class GameBuilderTest extends TestCase
     public function buildDataProvider(): array
     {
         $base = [
+            'fixture' => null, //placeholder
             'expectedId' => 822,
             'expectedImage' => 'https://cf.geekdo-images.com/Z3upN53-fsVPUDimN9SpOA__original/img/9LEvU4EbbBrJB36YgWQXeXQYwjo=/0x0/filters:format(jpeg)/pic2337577.jpg',
             'expectedThumbnail' => 'https://cf.geekdo-images.com/Z3upN53-fsVPUDimN9SpOA__thumb/img/_C5pWATlaq3uS8u7IlFb0WMi_ak=/fit-in/200x150/filters:strip_icc()/pic2337577.jpg',
@@ -120,20 +126,24 @@ final class GameBuilderTest extends TestCase
             'expectedMaxPlayTime' => 45,
             'expectedMinAge' => 7,
             'expectedNamesCount' => 17,
-            'nameIndex' => null, //placeholder
+            'nameIndex' => 0,
             'expectedName' => null, //placeholder
             'expectedLinksCount' => 243,
-            'linkIndex' => null, //placeholder
+            'linkIndex' => 0,
             'expectedLink' => null, //placeholder
             'expectedPollsCount' => 3,
             'expectedPollName' => 'suggested_numplayers',
             'expectedPollTitle' => 'User Suggested Number of Players',
             'expectedPollVotes' => 2154,
             'expectedPollResultsCount' => 18,
+            'expectedStats' => null, //placeholder
+            'expectedTotal' => 1,
+            'gameIndex' => 0,
         ];
 
         return [
             'stats' => array_merge($base, [
+                'fixture' => '/fixtures/game.xml',
                 'expectedStats' => $this->buildStats(
                     107363,
                     7.41855,
@@ -168,17 +178,38 @@ final class GameBuilderTest extends TestCase
                 ),
                 'nameIndex' => 1,
                 'expectedName' => new GameName(1, GameName::TYPE_ALTERNATE, 'Carcassonne Jubilee Edition'),
-                'linkIndex' => 0,
                 'expectedLink' => new GameLink(1029, GameLink::TYPE_CATEGORY, 'City Building'),
-                'fixture' => '/fixtures/game.xml',
             ]),
             'no stats' => array_merge($base, [
-                'expectedStats' => null,
-                'nameIndex' => 0,
+                'fixture' => '/fixtures/game_no_stats.xml',
                 'expectedName' => new GameName(1, GameName::TYPE_PRIMARY, 'Carcassonne'),
                 'linkIndex' => 203,
                 'expectedLink' => new GameLink(398, GameLink::TYPE_DESIGNER, 'Klaus-Jürgen Wrede'),
-                'fixture' => '/fixtures/game_no_stats.xml',
+            ]),
+            'multiple_games' => array_merge($base, [
+                'fixture' => '/fixtures/multi_games.xml',
+                'expectedId' => 999,
+                'expectedImage' => 'https://cf.geekdo-images.com/x4ls1E4Y7KMlCnPeRTbIew__original/img/WKuYbaFCdePj84tCTdypteyBHic=/0x0/filters:format(jpeg)/pic3031803.jpg',
+                'expectedThumbnail' => 'https://cf.geekdo-images.com/x4ls1E4Y7KMlCnPeRTbIew__thumb/img/QUA66MlXNclGjOLqNbfGsKlrHm8=/fit-in/200x150/filters:strip_icc()/pic3031803.jpg',
+                'expectedDescriptionStart' => 'Got quick reflexes and a good memory? Test your skills in this high-energy card game of musical',
+                'expectedYearPublished' => 1994,
+                'expectedMinPlayers' => 3,
+                'expectedMaxPlayers' => 6,
+                'expectedPlayingTime' => 20,
+                'expectedMinPlayTime' => 20,
+                'expectedMaxPlayTime' => 20,
+                'expectedMinAge' => 6,
+                'expectedNamesCount' => 4,
+                'expectedName' => new GameName(1, GameName::TYPE_PRIMARY, 'Panda Monium'),
+                'expectedLinksCount' => 20,
+                'expectedLink' => new GameLink(1032, GameLink::TYPE_CATEGORY, 'Action / Dexterity'),
+                'expectedPollsCount' => 3,
+                'expectedPollName' => 'suggested_numplayers',
+                'expectedPollTitle' => 'User Suggested Number of Players',
+                'expectedPollVotes' => 2,
+                'expectedPollResultsCount' => 21,
+                'expectedTotal' => 2,
+                'gameIndex' => 1,
             ]),
         ];
     }

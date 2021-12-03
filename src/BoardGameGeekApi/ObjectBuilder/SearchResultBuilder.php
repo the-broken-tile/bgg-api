@@ -43,7 +43,7 @@ final class SearchResultBuilder extends AbstractObjectBuilder
             \assert(\is_string($value));
 
             $items[] = new SearchItem(
-                (int) $itemElement->getAttribute(self::ID),
+                $this->getId($itemCrawler),
                 $itemElement->getAttribute(self::TYPE),
                 new GameName(
                     1,
