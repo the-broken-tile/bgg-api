@@ -12,28 +12,29 @@ use TheBrokenTile\BoardGameGeekApi\Request\RetryRequestInterface;
 
 final class Client implements ClientInterface
 {
-    public const CACHE_TAG_PREFIX = 'the_broken_tile';
+    use SanitizeCacheKeyTrait;
+
     private const METHOD = 'GET';
-    private const TYPE_PREFIX = 'api_type_';
 
     private HttpClientInterface $client;
     private TagAwareCacheInterface $cache;
     private ObjectBuilderManagerInterface $builder;
     private UrlGeneratorInterface $urlGenerator;
-    private string $cacheTagPrefix;
+    private CacheTagGeneratorInterface $cacheTagGenerator;
 
     public function __construct(
         HttpClientInterface $client,
         TagAwareCacheInterface $cache,
         ObjectBuilderManagerInterface $gameBuilder,
         UrlGeneratorInterface $urlGenerator,
-        string $cacheTagPrefix = self::CACHE_TAG_PREFIX
+        CacheTagGeneratorInterface $cacheTagGenerator
+
     ) {
         $this->client = $client;
         $this->cache = $cache;
         $this->builder = $gameBuilder;
         $this->urlGenerator = $urlGenerator;
-        $this->cacheTagPrefix = $cacheTagPrefix;
+        $this->cacheTagGenerator = $cacheTagGenerator;
     }
 
     public function request(RequestInterface $request): ResponseInterface
@@ -41,7 +42,7 @@ final class Client implements ClientInterface
         $url = $this->urlGenerator->generate($request);
 
         $response = $this->cache->get($this->buildCacheKey($request), function (ItemInterface $item) use ($url, $request): string {
-            $item->tag($this->buildTags($request));
+            $item->tag($this->cacheTagGenerator->generateTags($request));
 
             return $this->client->request(self::METHOD, $url)->getContent();
         });
@@ -64,25 +65,5 @@ final class Client implements ClientInterface
         );
 
         return $this->sanitizeKey($key);
-    }
-
-    /**
-     * @return string[]
-     */
-    private function buildTags(RequestInterface $request): array
-    {
-        $tags = [
-            sprintf('%s.%s%s', $this->cacheTagPrefix, self::TYPE_PREFIX, $request->getType()),
-        ];
-        foreach ($request->getParams() as $k => $v) {
-            $tags[] = $this->sanitizeKey(sprintf('%s.%s_%s', $this->cacheTagPrefix, $k, $v));
-        }
-
-        return $tags;
-    }
-
-    private function sanitizeKey(string $key): string
-    {
-        return str_replace(str_split(ItemInterface::RESERVED_CHARACTERS.' '), [], $key);
     }
 }

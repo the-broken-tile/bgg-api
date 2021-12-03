@@ -12,6 +12,6 @@ $cache = new TagAwareAdapter(
     new FilesystemAdapter(),
 );
 
-$result = $cache->invalidateTags([sprintf('%s.%s', Client::CACHE_TAG_PREFIX, $tag)]);
+$result = $cache->invalidateTags([sprintf('%s.%s', CacheTagGeneratorInterface::CACHE_TAG_PREFIX, $tag)]);
 
 echo sprintf('Cache tag "%s" %s invalidated.', $tag, $result ? 'successfully' : 'not');

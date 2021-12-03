@@ -22,7 +22,7 @@ if (count($argv) < 2) {
 $query = $argv[1];
 
 $searchResultBuilder = new SearchResultBuilder();
-
+$cacheTagGenerator = new CacheTagGenerator();
 $client = new Client(
     new CurlHttpClient(),
     new TagAwareAdapter(
@@ -33,6 +33,11 @@ $client = new Client(
         new RetryExactSearchBuilder($searchResultBuilder),
     ]),
     new UrlGenerator(),
+    $cacheTagGenerator
 );
 
-var_dump($client->request(new SearchRequest($query, true)));
+$request = new SearchRequest($query, true);
+var_dump($client->request($request));
+
+echo 'Cached under these tags:';
+var_dump($cacheTagGenerator->generateTags($request));
