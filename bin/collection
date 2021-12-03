@@ -3,9 +3,6 @@
 namespace TheBrokenTile\BoardGameGeekApi;
 
 use RuntimeException;
-use Symfony\Component\Cache\Adapter\TagAwareAdapter;
-use Symfony\Component\HttpClient\CurlHttpClient;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\CollectionBuilder;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilder;
 use TheBrokenTile\BoardGameGeekApi\Request\CollectionRequest;
@@ -19,14 +16,9 @@ if (count($argv) < 2) {
 $username = $argv[1];
 
 $client = new Client(
-    new CurlHttpClient(),
-    new TagAwareAdapter(
-        new FilesystemAdapter(),
-    ),
     new ObjectBuilder([
         new CollectionBuilder(),
     ]),
-    new UrlGenerator(),
 );
 
 var_dump($client->request(

@@ -60,9 +60,9 @@ final class ClientTest extends TestCase
         $cacheTagGenerator = $this->prophesize(CacheTagGeneratorInterface::class);
 
         $client = new Client(
+            $objectBuilder->reveal(),
             $httpClient->reveal(),
             $cache->reveal(),
-            $objectBuilder->reveal(),
             $urlGenerator->reveal(),
             $cacheTagGenerator->reveal(),
         );
