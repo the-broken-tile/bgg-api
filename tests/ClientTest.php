@@ -9,6 +9,7 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use TheBrokenTile\BoardGameGeekApi\CacheTagGeneratorInterface;
 use TheBrokenTile\BoardGameGeekApi\Client;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterface;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilderManagerInterface;
@@ -56,11 +57,14 @@ final class ClientTest extends TestCase
         $urlGenerator = $this->prophesize(UrlGeneratorInterface::class);
         $urlGenerator->generate($request)->willReturn('boardgamegeek.api');
 
+        $cacheTagGenerator = $this->prophesize(CacheTagGeneratorInterface::class);
+
         $client = new Client(
             $httpClient->reveal(),
             $cache->reveal(),
             $objectBuilder->reveal(),
             $urlGenerator->reveal(),
+            $cacheTagGenerator->reveal(),
         );
 
         self::assertSame($thing, $client->request($request)->getData());

@@ -70,6 +70,10 @@ final class UrlGeneratorTest extends TestCase
                 'https://api.geekdo.com/xmlapi2/search?query=Doomtown+Reloaded&exact=1&type=boardgame',
                 new SearchRequest('Doomtown: Reloaded', true),
             ],
+            'trim exclamation marks and commas' => [
+                'https://api.geekdo.com/xmlapi2/search?query=Aye+Dark+Overlord&type=boardgame',
+                new SearchRequest('Aye, Dark Overlord!'),
+            ],
         ];
     }
 }
