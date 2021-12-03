@@ -19,17 +19,13 @@ if (count($argv) < 2) {
 $username = $argv[1];
 
 $client = new Client(
-    new CurlHttpClient(),
-    new TagAwareAdapter(
-        new FilesystemAdapter(),
-    ),
     new ObjectBuilder([
         new UserBuilder(),
     ]),
-    new UrlGenerator(),
 );
 
-var_dump($client->request(
+var_dump(
+    $client->request(
         (new UserRequest($username))
         ->buddies()
         ->guilds()

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\BoardGameGeekApi;
 
+use Symfony\Component\Cache\Adapter\FilesystemTagAwareAdapter;
+use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -16,24 +18,24 @@ final class Client implements ClientInterface
 
     private const METHOD = 'GET';
 
+    private ObjectBuilderManagerInterface $objectBuilder;
     private HttpClientInterface $client;
     private TagAwareCacheInterface $cache;
-    private ObjectBuilderManagerInterface $builder;
     private UrlGeneratorInterface $urlGenerator;
     private CacheTagGeneratorInterface $cacheTagGenerator;
 
     public function __construct(
-        HttpClientInterface $client,
-        TagAwareCacheInterface $cache,
-        ObjectBuilderManagerInterface $gameBuilder,
-        UrlGeneratorInterface $urlGenerator,
-        CacheTagGeneratorInterface $cacheTagGenerator
+        ObjectBuilderManagerInterface $objectBuilder,
+        HttpClientInterface $client = null,
+        TagAwareCacheInterface $cache = null,
+        UrlGeneratorInterface $urlGenerator = null,
+        CacheTagGeneratorInterface $cacheTagGenerator = null
     ) {
-        $this->client = $client;
-        $this->cache = $cache;
-        $this->builder = $gameBuilder;
-        $this->urlGenerator = $urlGenerator;
-        $this->cacheTagGenerator = $cacheTagGenerator;
+        $this->objectBuilder = $objectBuilder;
+        $this->client = $client ?? new CurlHttpClient();
+        $this->cache = $cache ?? new FilesystemTagAwareAdapter();
+        $this->urlGenerator = $urlGenerator ?? new UrlGenerator();
+        $this->cacheTagGenerator = $cacheTagGenerator ?? new CacheTagGenerator();
     }
 
     public function request(RequestInterface $request): ResponseInterface
@@ -47,7 +49,7 @@ final class Client implements ClientInterface
         });
         \assert(\is_string($response));
 
-        $thing = $this->builder->build($request, $response);
+        $thing = $this->objectBuilder->build($request, $response);
         if (0 === $thing->getTotalItems() && $request instanceof RetryRequestInterface && $retryRequest = $request->getRetryRequest()) {
             return $this->request($retryRequest);
         }

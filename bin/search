@@ -24,16 +24,10 @@ $query = $argv[1];
 $searchResultBuilder = new SearchResultBuilder();
 $cacheTagGenerator = new CacheTagGenerator();
 $client = new Client(
-    new CurlHttpClient(),
-    new TagAwareAdapter(
-        new FilesystemAdapter(),
-    ),
     new ObjectBuilder([
         $searchResultBuilder,
         new RetryExactSearchBuilder($searchResultBuilder),
     ]),
-    new UrlGenerator(),
-    $cacheTagGenerator
 );
 
 $request = new SearchRequest($query, true);

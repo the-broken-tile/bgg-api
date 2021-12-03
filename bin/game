@@ -3,9 +3,6 @@
 namespace TheBrokenTile\BoardGameGeekApi;
 
 use RuntimeException;
-use Symfony\Component\Cache\Adapter\TagAwareAdapter;
-use Symfony\Component\HttpClient\CurlHttpClient;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\GameBuilder;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilder;
 use TheBrokenTile\BoardGameGeekApi\Request\GameRequest;
@@ -20,14 +17,9 @@ $ids = explode(RequestInterface::PARAM_VALUE_SEPARATOR, $argv[1]);
 $stats = (bool) ($argv[2] ?? false);
 
 $client = new Client(
-    new CurlHttpClient(),
-    new TagAwareAdapter(
-        new FilesystemAdapter(),
-    ),
     new ObjectBuilder([
         new GameBuilder(),
     ]),
-    new UrlGenerator(),
 );
 
 $request = new GameRequest(...$ids);
