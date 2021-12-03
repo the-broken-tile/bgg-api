@@ -8,7 +8,7 @@ final class UrlGenerator implements UrlGeneratorInterface
 {
     private const URL = 'https://api.geekdo.com/xmlapi2';
     private const DEFAULT_VALUE_FIXES = [
-        RequestInterface::PARAM_QUERY => [':', ''],
+        RequestInterface::PARAM_QUERY => ['/:|!|,/', ''],
     ];
 
     private string $baseUrl;
@@ -41,10 +41,10 @@ final class UrlGenerator implements UrlGeneratorInterface
     {
         foreach ($params as $key => $value) {
             if (isset($this->valueFixes[$key])) {
-                /** @var string $search */
+                /** @var string $pattern */
                 /** @var string $replace */
-                [$search, $replace] = $this->valueFixes[$key];
-                $params[$key] = str_replace($search, $replace, $value);
+                [$pattern, $replace] = $this->valueFixes[$key];
+                $params[$key] = preg_replace($pattern, $replace, $value);
             }
         }
 
