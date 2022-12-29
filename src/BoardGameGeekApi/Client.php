@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace TheBrokenTile\BoardGameGeekApi;
 
 use Symfony\Component\Cache\Adapter\FilesystemTagAwareAdapter;
+use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\HttpClient\CurlHttpClient;
+use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilderManagerInterface;
 use TheBrokenTile\BoardGameGeekApi\Request\RetryRequestInterface;
@@ -20,14 +21,14 @@ final class Client implements ClientInterface
 
     private ObjectBuilderManagerInterface $objectBuilder;
     private HttpClientInterface $client;
-    private TagAwareCacheInterface $cache;
+    private CacheInterface $cache;
     private UrlGeneratorInterface $urlGenerator;
     private CacheTagGeneratorInterface $cacheTagGenerator;
 
     public function __construct(
         ObjectBuilderManagerInterface $objectBuilder,
         HttpClientInterface $client = null,
-        TagAwareCacheInterface $cache = null,
+        CacheInterface $cache = null,
         UrlGeneratorInterface $urlGenerator = null,
         CacheTagGeneratorInterface $cacheTagGenerator = null
     ) {
@@ -43,7 +44,9 @@ final class Client implements ClientInterface
         $url = $this->urlGenerator->generate($request);
 
         $response = $this->cache->get($this->buildCacheKey($request), function (ItemInterface $item) use ($url, $request): string {
-            $item->tag($this->cacheTagGenerator->generateTags($request));
+            if ($this->cache instanceof TagAwareAdapterInterface) {
+                $item->tag($this->cacheTagGenerator->generateTags($request));
+            }
 
             return $this->client->request(self::METHOD, $url)->getContent();
         });

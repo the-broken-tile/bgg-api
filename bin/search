@@ -3,6 +3,7 @@
 namespace TheBrokenTile\BoardGameGeekApi;
 
 use RuntimeException;
+use Symfony\Component\Cache\Adapter\NullAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -28,6 +29,8 @@ $client = new Client(
         $searchResultBuilder,
         new RetryExactSearchBuilder($searchResultBuilder),
     ]),
+    null,
+    new NullAdapter(),
 );
 
 $request = new SearchRequest($query, true);
