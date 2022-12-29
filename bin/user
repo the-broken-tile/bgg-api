@@ -3,6 +3,7 @@
 namespace TheBrokenTile\BoardGameGeekApi;
 
 use RuntimeException;
+use Symfony\Component\Cache\Adapter\NullAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -22,6 +23,8 @@ $client = new Client(
     new ObjectBuilder([
         new UserBuilder(),
     ]),
+    null,
+    new NullAdapter(),
 );
 
 var_dump(

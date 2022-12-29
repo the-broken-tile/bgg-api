@@ -3,6 +3,7 @@
 namespace TheBrokenTile\BoardGameGeekApi;
 
 use RuntimeException;
+use Symfony\Component\Cache\Adapter\NullAdapter;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\GameBuilder;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilder;
 use TheBrokenTile\BoardGameGeekApi\Request\GameRequest;
@@ -20,6 +21,8 @@ $client = new Client(
     new ObjectBuilder([
         new GameBuilder(),
     ]),
+    null,
+    new NullAdapter(),
 );
 
 $request = new GameRequest(...$ids);
