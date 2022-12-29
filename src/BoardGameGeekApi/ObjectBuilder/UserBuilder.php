@@ -148,9 +148,14 @@ final class UserBuilder implements ObjectBuilderInterface
     /**
      * @throws InvalidResponseException
      */
-    private function getIntValue(Crawler $crawler, string $selector): int
+    private function getIntValue(Crawler $crawler, string $selector): ?int
     {
-        $value = $crawler->filter($selector)->attr(self::VALUE);
+        $element = $crawler->filter($selector);
+        if (0 === $element->count()) {
+            return null;
+        }
+
+        $value = $element->attr(self::VALUE);
         if (null === $value) {
             throw new InvalidResponseException(sprintf('"%s" is required', $selector));
         }

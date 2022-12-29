@@ -22,7 +22,7 @@ final class User implements DataTransferObjectInterface
     public string $battleNetAccount;
     public string $steamAccount;
     public int $tradeRating;
-    public int $marketRating;
+    public ?int $marketRating = null;
     /** @var UserBuddy[] */
     public array $buddies = [];
     /** @var UserGuild[] */
