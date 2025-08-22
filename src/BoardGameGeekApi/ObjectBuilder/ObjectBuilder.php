@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\BoardGameGeekApi\ObjectBuilder;
 
-use DomainException;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterface;
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
@@ -27,6 +26,6 @@ final class ObjectBuilder implements ObjectBuilderManagerInterface
             }
         }
 
-        throw new DomainException('Unknown response');
+        throw new \DomainException('Unknown response');
     }
 }

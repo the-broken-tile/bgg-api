@@ -10,14 +10,9 @@ use TheBrokenTile\BoardGameGeekApi\DataTransferObject\SearchResults;
 use TheBrokenTile\BoardGameGeekApi\Request\RetrySearchRequest;
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
-final class RetryExactSearchBuilder implements ObjectBuilderInterface
+final readonly class RetryExactSearchBuilder implements ObjectBuilderInterface
 {
-    private ObjectBuilderInterface $searchBuilder;
-
-    public function __construct(ObjectBuilderInterface $searchBuilder)
-    {
-        $this->searchBuilder = $searchBuilder;
-    }
+    public function __construct(private ObjectBuilderInterface $searchBuilder) {}
 
     public function supports(RequestInterface $request): bool
     {
@@ -27,7 +22,7 @@ final class RetryExactSearchBuilder implements ObjectBuilderInterface
     public function build(string $response, RequestInterface $request): DataTransferObjectInterface
     {
         $result = $this->searchBuilder->build($response, $request);
-        \assert($result instanceof SearchResults);
+        assert($result instanceof SearchResults);
 
         $result->items = array_values(
             array_filter(
@@ -35,7 +30,6 @@ final class RetryExactSearchBuilder implements ObjectBuilderInterface
                 static fn (SearchItem $item) => $item->name->value === $request->getParams()[RequestInterface::PARAM_QUERY],
             ),
         );
-        $result->total = \count($result->items);
 
         return $result;
     }

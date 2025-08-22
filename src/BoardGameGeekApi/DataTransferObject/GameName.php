@@ -6,17 +6,8 @@ namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
 final class GameName
 {
-    public const TYPE_PRIMARY = 'primary';
-    public const TYPE_ALTERNATE = 'alternate';
+    public const string TYPE_PRIMARY = 'primary';
+    public const string TYPE_ALTERNATE = 'alternate';
 
-    public int $sortIndex;
-    public ?string $type = null;
-    public string $value;
-
-    public function __construct(int $sortIndex, ?string $type, string $value)
-    {
-        $this->sortIndex = $sortIndex;
-        $this->type = $type;
-        $this->value = $value;
-    }
+    public function __construct(public int $sortIndex, public ?string $type, public string $value) {}
 }

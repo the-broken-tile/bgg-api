@@ -6,14 +6,12 @@ namespace TheBrokenTile\BoardGameGeekApi\Request;
 
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
-final class SearchRequest implements RequestInterface, RetryRequestInterface
+final readonly class SearchRequest implements RequestInterface, RetryRequestInterface
 {
-    private string $query;
     private ?string $exact;
 
-    public function __construct(string $query, bool $exact = null)
+    public function __construct(private string $query, ?bool $exact = null)
     {
-        $this->query = $query;
         $this->exact = null === $exact ? null : ($exact ? '1' : '0');
     }
 

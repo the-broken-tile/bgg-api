@@ -2,40 +2,36 @@
 
 declare(strict_types=1);
 
-namespace TheBrokenTile\Test\BoardGameGeekApi\ObjectBuilder;
+namespace TheBrokenTile\Test;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use TheBrokenTile\BoardGameGeekApi\DataTransferObject\User;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserBuddy;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserHotItem;
+use TheBrokenTile\BoardGameGeekApi\Exception\InvalidResponseException;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\UserBuilder;
 use TheBrokenTile\BoardGameGeekApi\Request\SearchRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\UserRequest;
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 /**
- * @coversDefaultClass \TheBrokenTile\BoardGameGeekApi\ObjectBuilder\UserBuilder
- *
  * @internal
  */
+#[CoversClass(UserBuilder::class)]
 final class UserBuilderTest extends TestCase
 {
-    use ProphecyTrait;
-
-    /**
-     * @covers ::suppports
-     */
     public function testSupports(): void
     {
         $userBuilder = new UserBuilder();
-        self::assertTrue($userBuilder->supports(new UserRequest('test')));
+        self::assertTrue($userBuilder->supports(new UserRequest('::user::')));
 
-        self::assertFalse($userBuilder->supports(new SearchRequest('test')));
+        self::assertFalse($userBuilder->supports(new SearchRequest('::search::')));
     }
 
     /**
-     * @covers ::build
+     * @throws InvalidResponseException
+     * @throws Exception
      */
     public function testBuild(): void
     {
@@ -43,8 +39,7 @@ final class UserBuilderTest extends TestCase
         $response = file_get_contents(__DIR__.'/fixtures/user.xml');
         \assert(\is_string($response));
 
-        $user = $userBuilder->build($response, $this->prophesize(RequestInterface::class)->reveal());
-        self::assertInstanceOf(User::class, $user);
+        $user = $userBuilder->build($response, $this->createMock(RequestInterface::class));
         self::assertSame(844486, $user->id);
         self::assertSame('tazzadar1337', $user->name);
         self::assertSame('Rusi', $user->firstName);
@@ -63,22 +58,22 @@ final class UserBuilderTest extends TestCase
         self::assertSame(0, $user->tradeRating);
         self::assertSame(2, $user->marketRating);
 
-        //Buddies.
+        // Buddies.
         self::assertCount(9, $user->buddies);
         $buddy = current($user->buddies);
-        \assert($buddy instanceof UserBuddy);
+        self::assertInstanceOf(UserBuddy::class, $buddy);
         self::assertSame(1201816, $buddy->id);
         self::assertSame('aymaliev', $buddy->name);
 
-        //Guilds.
+        // Guilds.
         self::assertEmpty($user->guilds);
 
-        //Hot.
+        // Hot.
         self::assertCount(1, $user->hot);
         $hot = current($user->hot);
         self::assertInstanceOf(UserHotItem::class, $hot);
 
-        //Top.
+        // Top.
         self::assertEmpty($user->top);
     }
 }

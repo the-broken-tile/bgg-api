@@ -6,12 +6,8 @@ namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
 final class SearchResults implements DataTransferObjectInterface
 {
-    public int $total;
-    /** @var SearchItem[] */
-    public array $items = [];
+    public int $totalItems {get => count($this->items); }
 
-    public function getTotalItems(): int
-    {
-        return $this->total;
-    }
+    /** @param SearchItem[] $items */
+    public function __construct(public array $items = []) {}
 }

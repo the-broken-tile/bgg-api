@@ -4,6 +4,4 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
-final class Expansion extends DataTransferObject
-{
-}
+final class Expansion extends DataTransferObject {}

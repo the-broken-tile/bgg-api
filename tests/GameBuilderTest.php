@@ -4,252 +4,289 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\Test;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\Game;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameLink;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameName;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GamePoll;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameRank;
+use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameRatings;
+use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameResults;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameStatistics;
+use TheBrokenTile\BoardGameGeekApi\DataTransferObject\PollResult;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\GameBuilder;
 use TheBrokenTile\BoardGameGeekApi\Request\GameRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\SearchRequest;
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 /**
- * @coversDefaultCLass \TheBrokenTile\BoardGameGeekApi\ObjectBuilder\GameBuilder
- *
  * @internal
  */
+#[CoversClass(GameBuilder::class)]
 final class GameBuilderTest extends TestCase
 {
-    use ProphecyTrait;
+    private GameBuilder $builder;
 
-    /**
-     * @covers ::supports
-     */
+    #[\Override]
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->builder = new GameBuilder();
+    }
+
     public function testSupports(): void
     {
-        $builder = new GameBuilder();
-
-        self::assertTrue($builder->supports(new GameRequest(1)));
-        self::assertFalse($builder->supports(new SearchRequest('test')));
+        self::assertTrue($this->builder->supports(new GameRequest(1)));
+        self::assertFalse($this->builder->supports(new SearchRequest('::test::')));
     }
 
     /**
-     * @covers ::build
-     * @dataProvider buildDataProvider
+     * @throws Exception
      */
-    public function testBuild(
-        string $fixture,
-        int $expectedId,
-        string $expectedImage,
-        string $expectedThumbnail,
-        string $expectedDescriptionStart,
-        int $expectedYearPublished,
-        int $expectedMinPlayers,
-        int $expectedMaxPlayers,
-        int $expectedPlayingTime,
-        int $expectedMinPlayTime,
-        int $expectedMaxPlayTime,
-        int $expectedMinAge,
-        int $expectedNamesCount,
-        int $nameIndex,
-        GameName $expectedName,
-        int $expectedLinksCount,
-        int $linkIndex,
-        GameLink $expectedGameLink,
-        int $expectedPollsCount,
-        string $expectedPollName,
-        string $expectedPollTitle,
-        int $expectedPollVotes,
-        int $expectedPollResultsCount,
-        ?GameStatistics $expectedStats,
-        int $expectedTotal,
-        int $gameIndex
-    ): void {
-        $builder = new GameBuilder();
-        $response = file_get_contents(__DIR__.$fixture);
-        \assert(\is_string($response));
-
-        $results = $builder->build($response, $this->prophesize(RequestInterface::class)->reveal());
-        self::assertSame($expectedTotal, $results->total);
-        $game = $results->items[$gameIndex];
-        \assert($game instanceof Game);
-        self::assertSame($expectedId, $game->id);
-        self::assertSame($expectedImage, $game->image);
-        self::assertSame($expectedThumbnail, $game->thumbnail);
-        self::assertStringStartsWith($expectedDescriptionStart, $game->description);
-        self::assertSame($expectedYearPublished, $game->yearPublished);
-        self::assertSame($expectedMinPlayers, $game->minPlayers);
-        self::assertSame($expectedMaxPlayers, $game->maxPlayers);
-        self::assertSame($expectedPlayingTime, $game->playingTime);
-        self::assertSame($expectedMinPlayTime, $game->minPlayTime);
-        self::assertSame($expectedMaxPlayTime, $game->maxPlayTime);
-        self::assertSame($expectedMinAge, $game->minAge);
-
-        self::assertCount($expectedNamesCount, $game->names);
-
-        $name = $game->names[$nameIndex];
-        self::assertEquals($expectedName, $name);
-
-        self::assertCount($expectedLinksCount, $game->links);
-        $link = $game->links[$linkIndex];
-        self::assertEquals($expectedGameLink, $link);
-
-        // @todo rework poll results, they have different structure, current implementation doesn't support both.
-        self::assertCount($expectedPollsCount, $game->polls);
-        $poll = current($game->polls);
-        \assert($poll instanceof GamePoll);
-        self::assertSame($expectedPollName, $poll->name);
-        self::assertSame($expectedPollTitle, $poll->title);
-        self::assertSame($expectedPollVotes, $poll->totalVotes);
-        self::assertCount($expectedPollResultsCount, $poll->results);
-
-        self::assertEquals($expectedStats, $game->stats);
-    }
-
-    /**
-     * @return array<string, mixed[]>
-     */
-    public function buildDataProvider(): array
+    public function BuildWithStats(): void
     {
-        $base = [
-            'fixture' => null, //placeholder
-            'expectedId' => 822,
-            'expectedImage' => 'https://cf.geekdo-images.com/Z3upN53-fsVPUDimN9SpOA__original/img/9LEvU4EbbBrJB36YgWQXeXQYwjo=/0x0/filters:format(jpeg)/pic2337577.jpg',
-            'expectedThumbnail' => 'https://cf.geekdo-images.com/Z3upN53-fsVPUDimN9SpOA__thumb/img/_C5pWATlaq3uS8u7IlFb0WMi_ak=/fit-in/200x150/filters:strip_icc()/pic2337577.jpg',
-            'expectedDescriptionStart' => 'Carcassonne is a tile-placement game in which the players draw and place a tile',
-            'expectedYearPublished' => 2000,
-            'expectedMinPlayers' => 2,
-            'expectedMaxPlayers' => 5,
-            'expectedPlayingTime' => 45,
-            'expectedMinPlayTime' => 30,
-            'expectedMaxPlayTime' => 45,
-            'expectedMinAge' => 7,
-            'expectedNamesCount' => 17,
-            'nameIndex' => 0,
-            'expectedName' => null, //placeholder
-            'expectedLinksCount' => 243,
-            'linkIndex' => 0,
-            'expectedLink' => null, //placeholder
-            'expectedPollsCount' => 3,
-            'expectedPollName' => 'suggested_numplayers',
-            'expectedPollTitle' => 'User Suggested Number of Players',
-            'expectedPollVotes' => 2154,
-            'expectedPollResultsCount' => 18,
-            'expectedStats' => null, //placeholder
-            'expectedTotal' => 1,
-            'gameIndex' => 0,
-        ];
+        /** @var string $response */
+        $response = file_get_contents(__DIR__.'/fixtures/game.xml');
 
-        return [
-            'stats' => array_merge($base, [
-                'fixture' => '/fixtures/game.xml',
-                'expectedStats' => $this->buildStats(
-                    107363,
-                    7.41855,
-                    158733,
-                    1696,
-                    577,
-                    7250,
-                    19100,
-                    7657,
-                    1.9071,
-                    7.30909,
-                    1.30574,
-                    0.0,
-                    [
-                        new GameRank(
-                            1,
-                            'boardgame',
-                            GameRank::TYPE_SUBTYPE,
-                            'Board Game Rank',
-                            185,
-                            7.30909,
-                        ),
-                        new GameRank(
-                            5499,
-                            'familygames',
-                            GameRank::TYPE_FAMILY,
-                            'Family Game Rank',
-                            40,
-                            7.30109,
-                        ),
-                    ]
+        $results = $this->builder->build($response, $this->createMock(RequestInterface::class));
+
+        self::assertEquals(
+            new GameResults([
+                $this->mockCarcassonneGame(
+                    stats: $this->mockStats(),
+                    names: $this->mockCarcassoneNames(),
+                    links: $this->mockCarcassonneLinks(),
+                    polls: $this->mockPolls(),
+                )]),
+            $results,
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testBuildWithoutStats(): void
+    {
+        /** @var string $response */
+        $response = file_get_contents(__DIR__.'/fixtures/game_no_stats.xml');
+
+        $results = $this->builder->build($response, $this->createMock(RequestInterface::class));
+
+        $game = $this->mockCarcassonneGame(null, $this->mockCarcassoneNames(), $this->mockCarcassonneLinks(), $this->mockPolls());
+
+        self::assertEquals(new GameResults([$game]), $results);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testBuildMultiGames(): void
+    {
+        /** @var string $response */
+        $response = file_get_contents(__DIR__.'/fixtures/multi_games.xml');
+
+        $results = $this->builder->build($response, $this->createMock(RequestInterface::class));
+
+        self::assertEquals(
+            new GameResults([
+                $this->mockCarcassonneGame(
+                    stats: null,
+                    names: $this->mockCarcassoneNames(),
+                    links: $this->mockCarcassonneLinks(),
+                    polls: $this->mockPolls(),
                 ),
-                'nameIndex' => 1,
-                'expectedName' => new GameName(1, GameName::TYPE_ALTERNATE, 'Carcassonne Jubilee Edition'),
-                'expectedLink' => new GameLink(1029, GameLink::TYPE_CATEGORY, 'City Building'),
+                $this->mockPandaMoniumGame(),
             ]),
-            'no stats' => array_merge($base, [
-                'fixture' => '/fixtures/game_no_stats.xml',
-                'expectedName' => new GameName(1, GameName::TYPE_PRIMARY, 'Carcassonne'),
-                'linkIndex' => 203,
-                'expectedLink' => new GameLink(398, GameLink::TYPE_DESIGNER, 'Klaus-Jürgen Wrede'),
-            ]),
-            'multiple_games' => array_merge($base, [
-                'fixture' => '/fixtures/multi_games.xml',
-                'expectedId' => 999,
-                'expectedImage' => 'https://cf.geekdo-images.com/x4ls1E4Y7KMlCnPeRTbIew__original/img/WKuYbaFCdePj84tCTdypteyBHic=/0x0/filters:format(jpeg)/pic3031803.jpg',
-                'expectedThumbnail' => 'https://cf.geekdo-images.com/x4ls1E4Y7KMlCnPeRTbIew__thumb/img/QUA66MlXNclGjOLqNbfGsKlrHm8=/fit-in/200x150/filters:strip_icc()/pic3031803.jpg',
-                'expectedDescriptionStart' => 'Got quick reflexes and a good memory? Test your skills in this high-energy card game of musical',
-                'expectedYearPublished' => 1994,
-                'expectedMinPlayers' => 3,
-                'expectedMaxPlayers' => 6,
-                'expectedPlayingTime' => 20,
-                'expectedMinPlayTime' => 20,
-                'expectedMaxPlayTime' => 20,
-                'expectedMinAge' => 6,
-                'expectedNamesCount' => 4,
-                'expectedName' => new GameName(1, GameName::TYPE_PRIMARY, 'Panda Monium'),
-                'expectedLinksCount' => 20,
-                'expectedLink' => new GameLink(1032, GameLink::TYPE_CATEGORY, 'Action / Dexterity'),
-                'expectedPollsCount' => 3,
-                'expectedPollName' => 'suggested_numplayers',
-                'expectedPollTitle' => 'User Suggested Number of Players',
-                'expectedPollVotes' => 2,
-                'expectedPollResultsCount' => 21,
-                'expectedTotal' => 2,
-                'gameIndex' => 1,
-            ]),
+            $results,
+        );
+    }
+
+    private function mockStats(): GameStatistics
+    {
+        $ratings = new GameRatings();
+        $ratings->ranks = [
+            new GameRank(
+                id: 1,
+                name: 'boardgame',
+                type: GameRank::TYPE_SUBTYPE,
+                friendlyName: 'Board Game Rank',
+                value: 185,
+                bayesAverage: 7.30909,
+            ),
+            new GameRank(
+                id: 5499,
+                name: 'familygames',
+                type: GameRank::TYPE_FAMILY,
+                friendlyName: 'Family Game Rank',
+                value: 40,
+                bayesAverage: 7.30109,
+            ),
+        ];
+        $ratings->owned = 158733;
+        $ratings->trading = 1696;
+        $ratings->wanting = 577;
+        $ratings->wishing = 7250;
+        $ratings->numComments = 19100;
+        $ratings->numWeights = 7657;
+        $ratings->averageWeight = 1.9071;
+        $ratings->usersRated = 107363;
+        $ratings->average = 7.41855;
+        $ratings->bayesAverage = 7.30909;
+        $ratings->stdDev = 1.30574;
+        $ratings->median = 0.0;
+
+        return new GameStatistics($ratings);
+    }
+
+    /**
+     * @return GameName[]
+     */
+    private function mockCarcassoneNames(): array
+    {
+        return [
+            new GameName(1, GameName::TYPE_PRIMARY, 'Carcassonne'),
+            new GameName(1, GameName::TYPE_ALTERNATE, 'Каркасон'),
         ];
     }
 
     /**
-     * @param GameRank[] $ranks
+     * @return GameLink[]
      */
-    private function buildStats(
-        int $usersRated,
-        float $average,
-        int $owned,
-        int $trading,
-        int $wanting,
-        int $wishing,
-        int $numComments,
-        int $numWeights,
-        float $averageWeight,
-        float $bayesAverage,
-        float $stdDev,
-        float $median,
-        array $ranks
-    ): GameStatistics {
-        $stats = new GameStatistics();
-        $stats->ratings->usersRated = $usersRated;
-        $stats->ratings->average = $average;
-        $stats->ratings->owned = $owned;
-        $stats->ratings->trading = $trading;
-        $stats->ratings->wanting = $wanting;
-        $stats->ratings->wishing = $wishing;
-        $stats->ratings->numComments = $numComments;
-        $stats->ratings->numWeights = $numWeights;
-        $stats->ratings->averageWeight = $averageWeight;
-        $stats->ratings->bayesAverage = $bayesAverage;
-        $stats->ratings->stdDev = $stdDev;
-        $stats->ratings->median = $median;
-        $stats->ratings->ranks = $ranks;
+    private function mockCarcassonneLinks(): array
+    {
+        return [
+            new GameLink(id: 1029, type: GameLink::TYPE_CATEGORY, value: 'City Building'),
+            new GameLink(id: 1035, type: GameLink::TYPE_CATEGORY, value: 'Medieval'),
+        ];
+    }
 
-        return $stats;
+    /**
+     * @return GamePoll[]
+     */
+    private function mockPolls(): array
+    {
+        return [
+            new GamePoll(
+                name: 'suggested_numplayers',
+                title: 'User Suggested Number of Players',
+                totalVotes: 2154,
+                results: [
+                    new PollResult(value: 'Best', numVotes: 6), // 1, missing prop to fill this in
+                    new PollResult(value: 'Recommended', numVotes: 60), // 1
+                    new PollResult(value: 'Not Recommended', numVotes: 1294), // 1
+                    new PollResult(value: 'Best', numVotes: 1141), // 2
+                    new PollResult(value: 'Recommended', numVotes: 767), // 2
+                    new PollResult(value: 'Not Recommended', numVotes: 104), // 2
+                ],
+            ),
+            new GamePoll(
+                name: 'suggested_playerage',
+                title: 'User Suggested Player Age',
+                totalVotes: 284,
+                results: [
+                    new PollResult(value: '2', numVotes: 2),
+                    new PollResult(value: '8', numVotes: 282),
+                    new PollResult(value: '21 and up', numVotes: 0),
+                ],
+            ),
+            new GamePoll(
+                name: 'language_dependence',
+                title: 'Language Dependence',
+                totalVotes: 462,
+                results: [
+                    new PollResult(value: 'No necessary in-game text', numVotes: 461),
+                    new PollResult(value: 'Unplayable in another language', numVotes: 1),
+                ],
+            ),
+        ];
+    }
+
+    /**
+     * @param GameName[] $names
+     * @param GameLink[] $links
+     * @param GamePoll[] $polls
+     */
+    private function mockCarcassonneGame(?GameStatistics $stats, array $names, array $links, array $polls): Game
+    {
+        $game = new Game();
+        $game->image = 'https://cf.geekdo-images.com/Z3upN53-fsVPUDimN9SpOA__original/img/9LEvU4EbbBrJB36YgWQXeXQYwjo=/0x0/filters:format(jpeg)/pic2337577.jpg';
+        $game->thumbnail = 'https://cf.geekdo-images.com/Z3upN53-fsVPUDimN9SpOA__thumb/img/_C5pWATlaq3uS8u7IlFb0WMi_ak=/fit-in/200x150/filters:strip_icc()/pic2337577.jpg';
+        $game->id = 822;
+        $game->description = 'Carcassonne is a tile-placement game in which the players draw and place a tile with a piece of southern French landscape on it.';
+        $game->yearPublished = 2000;
+        $game->minPlayers = 2;
+        $game->maxPlayers = 5;
+        $game->playingTime = 45;
+        $game->minPlayTime = 30;
+        $game->maxPlayTime = 45;
+        $game->minAge = 7;
+
+        $game->stats = $stats;
+        $game->names = $names;
+        $game->links = $links;
+        $game->polls = $polls;
+
+        return $game;
+    }
+
+    private function mockPandaMoniumGame(): Game
+    {
+        $game = new Game();
+        $game->image = 'https://cf.geekdo-images.com/x4ls1E4Y7KMlCnPeRTbIew__original/img/WKuYbaFCdePj84tCTdypteyBHic=/0x0/filters:format(jpeg)/pic3031803.jpg';
+        $game->thumbnail = 'https://cf.geekdo-images.com/x4ls1E4Y7KMlCnPeRTbIew__thumb/img/QUA66MlXNclGjOLqNbfGsKlrHm8=/fit-in/200x150/filters:strip_icc()/pic3031803.jpg';
+        $game->id = 999;
+        $game->description = 'Got quick reflexes and a good memory? Test your skills in this high-energy card game of musical mayhem.';
+        $game->yearPublished = 1994;
+        $game->minPlayers = 3;
+        $game->maxPlayers = 6;
+        $game->playingTime = 20;
+        $game->minPlayTime = 20;
+        $game->maxPlayTime = 20;
+        $game->minAge = 6;
+        $game->stats = null;
+
+        $game->polls = [
+            new GamePoll(
+                name: 'suggested_numplayers',
+                title: 'User Suggested Number of Players',
+                totalVotes: 2,
+                results: [
+                    new PollResult(value: 'Recommended', numVotes: 1), // 3
+                    new PollResult(value: 'Best', numVotes: 1), // 6
+                ],
+            ),
+        ];
+        $game->links = [
+            new GameLink(1032, type: GameLink::TYPE_CATEGORY, value: 'Action / Dexterity'),
+            new GameLink(1002, type: GameLink::TYPE_CATEGORY, value: 'Card Game'),
+        ];
+
+        $game->names = [
+            new GameName(
+                sortIndex: 1,
+                type: GameName::TYPE_PRIMARY,
+                value: 'Panda Monium',
+            ),
+            new GameName(
+                sortIndex: 1,
+                type: GameName::TYPE_ALTERNATE,
+                value: 'Concerto Grosso',
+            ),
+            new GameName(
+                sortIndex: 1,
+                type: 'alternate',
+                value: 'Little Amadeus: Concerto Grosso',
+            ),
+            new GameName(
+                sortIndex: 1,
+                type: 'alternate',
+                value: '숲 속의 음악대',
+            ),
+        ];
+
+        return $game;
     }
 }

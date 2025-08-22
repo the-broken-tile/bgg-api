@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\BoardGameGeekApi\ObjectBuilder;
 
-use DOMElement;
 use Symfony\Component\DomCrawler\Crawler;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameLink;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameName;
@@ -39,7 +38,7 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
     {
         $names = [];
 
-        /** @var DOMElement $name */
+        /** @var \DOMElement $name */
         foreach ($crawler->filter(self::NAME) as $name) {
             $names[] = new GameName(
                 (int) $name->getAttribute(self::SORT_INDEX),
@@ -60,21 +59,25 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
     protected function getPolls(Crawler $crawler): array
     {
         $polls = [];
-        /** @var DOMElement $pollElement */
+
+        /** @var \DOMElement $pollElement */
         foreach ($crawler->filter(self::POLL) as $pollElement) {
-            $poll = new GamePoll(
-                $pollElement->getAttribute(self::NAME),
-                $pollElement->getAttribute(self::TITLE),
-                (int) $pollElement->getAttribute(self::TOTAL_VOTES),
-            );
+            $results = [];
             $pollCrawler = new Crawler($pollElement);
             foreach ($pollCrawler->filter(self::RESULT) as $resultElement) {
-                \assert($resultElement instanceof DOMElement);
-                $poll->results[] = new PollResult(
-                    $resultElement->getAttribute(self::VALUE),
-                    (int) $resultElement->getAttribute(self::NUMBER_OF_VOTES),
+                assert($resultElement instanceof \DOMElement);
+                $results[] = new PollResult(
+                    value: $resultElement->getAttribute(self::VALUE),
+                    numVotes: (int) $resultElement->getAttribute(self::NUMBER_OF_VOTES),
                 );
             }
+
+            $poll = new GamePoll(
+                name: $pollElement->getAttribute(self::NAME),
+                title: $pollElement->getAttribute(self::TITLE),
+                totalVotes: (int) $pollElement->getAttribute(self::TOTAL_VOTES),
+                results: $results,
+            );
             $polls[] = $poll;
         }
 
@@ -85,7 +88,8 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
     protected function getLinks(Crawler $crawler): array
     {
         $links = [];
-        /** @var DOMElement $linkElement */
+
+        /** @var \DOMElement $linkElement */
         foreach ($crawler->filter(self::LINK) as $linkElement) {
             $links[] = new GameLink(
                 (int) $linkElement->getAttribute(self::ID),
@@ -103,19 +107,19 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
         if (0 === $statsCrawler->count()) {
             return null;
         }
-        $stats = new GameStatistics();
+        $stats = new GameStatistics(new GameRatings());
         $ratingsCrawler = $statsCrawler->filter($this->ratingsKey);
 
-        //These two should always be set.
+        // These two should always be set.
         $stats->ratings->average = (float) $ratingsCrawler->filter(self::AVERAGE)->attr(self::VALUE);
         $stats->ratings->bayesAverage = (float) $ratingsCrawler->filter(self::BAYESIAN_AVERAGE)->attr(self::VALUE);
 
-        //These three are set for collection and game with stats=1.
+        // These three are set for collection and game with stats=1.
         $stats->ratings->usersRated = $this->getIntAttribute($ratingsCrawler, self::USERS_RATED);
         $stats->ratings->stdDev = $this->getFloatAttribute($ratingsCrawler, self::STANDARD_DEVIATION);
         $stats->ratings->median = $this->getFloatAttribute($ratingsCrawler, self::MEDIAN);
 
-        //There rest are only set for game with stats=1.
+        // There rest are only set for game with stats=1.
         $stats->ratings->owned = $this->getIntAttribute($ratingsCrawler, self::OWNED);
         $stats->ratings->trading = $this->getIntAttribute($ratingsCrawler, self::TRADING);
         $stats->ratings->wanting = $this->getIntAttribute($ratingsCrawler, self::WANTING);
@@ -155,15 +159,15 @@ abstract class AbstractObjectBuilder implements ObjectBuilderInterface
             return;
         }
 
-        /** @var DOMElement $rank */
+        /** @var \DOMElement $rank */
         foreach ($ranks->filter(self::RANK) as $rank) {
             $ratings->ranks[] = new GameRank(
-                (int) $rank->getAttribute(self::ID),
-                $rank->getAttribute(self::RANK_NAME),
-                $rank->getAttribute(self::RANK_TYPE),
-                $rank->getAttribute(self::RANK_FRIENDLY_NAME),
-                (int) $rank->getAttribute(self::VALUE),
-                (float) $rank->getAttribute(self::RANK_BAYESIAN_AVERAGE),
+                id: (int) $rank->getAttribute(self::ID),
+                name: $rank->getAttribute(self::RANK_NAME),
+                type: $rank->getAttribute(self::RANK_TYPE),
+                friendlyName: $rank->getAttribute(self::RANK_FRIENDLY_NAME),
+                value: (int) $rank->getAttribute(self::VALUE),
+                bayesAverage: (float) $rank->getAttribute(self::RANK_BAYESIAN_AVERAGE),
             );
         }
     }

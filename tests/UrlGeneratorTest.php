@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\Test;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use TheBrokenTile\BoardGameGeekApi\Request\CollectionRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\GameRequest;
@@ -13,15 +15,11 @@ use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 use TheBrokenTile\BoardGameGeekApi\UrlGenerator;
 
 /**
- * @coversDefaultClass \TheBrokenTile\BoardGameGeekApi\UrlGenerator
- *
  * @internal
  */
+#[CoversClass(UrlGenerator::class)]
 final class UrlGeneratorTest extends TestCase
 {
-    /**
-     * @covers ::generate
-     */
     public function testGenerateCustomBaseUrl(): void
     {
         $urlGenerator = new UrlGenerator('google.com');
@@ -29,10 +27,7 @@ final class UrlGeneratorTest extends TestCase
         self::assertSame('google.com/thing?id=5', $urlGenerator->generate(new GameRequest(5)));
     }
 
-    /**
-     * @covers ::generate
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('provideGenerateCases')]
     public function testGenerate(string $expected, RequestInterface $request): void
     {
         $urlGenerator = new UrlGenerator();
@@ -43,7 +38,7 @@ final class UrlGeneratorTest extends TestCase
     /**
      * @return array<string, mixed[]>
      */
-    public function dataProvider(): array
+    public static function provideGenerateCases(): iterable
     {
         return [
             'game' => [

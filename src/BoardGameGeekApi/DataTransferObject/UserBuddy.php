@@ -4,14 +4,7 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
-final class UserBuddy
+final readonly class UserBuddy
 {
-    public int $id;
-    public string $name;
-
-    public function __construct(int $id, string $name)
-    {
-        $this->id = $id;
-        $this->name = $name;
-    }
+    public function __construct(public int $id, public string $name) {}
 }

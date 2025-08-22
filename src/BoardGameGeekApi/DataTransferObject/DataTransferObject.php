@@ -15,19 +15,20 @@ abstract class DataTransferObject implements DataTransferObjectInterface
     public ?int $yearPublished;
     public ?int $minPlayers;
     public ?int $maxPlayers;
+
     /** @var GamePoll[] */
     public array $polls;
+
     /** in minutes */
     public ?int $playingTime;
+
     /** in minutes */
     public ?int $minPlayTime;
+
     /** in minutes */
     public ?int $maxPlayTime;
     public ?int $minAge;
     public ?GameStatistics $stats;
 
-    public function getTotalItems(): int
-    {
-        return 1;
-    }
+    public int $totalItems {get => 1; }
 }

@@ -4,67 +4,74 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\Test;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterface;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilder;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilderInterface;
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 /**
- * @coversDefaultClass \TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilder
- *
  * @internal
  */
+#[CoversClass(ObjectBuilder::class)]
 final class ObjectBuilderTest extends TestCase
 {
-    use ProphecyTrait;
-
     /**
-     * @covers ::build
+     * @throws Exception
      */
     public function testBuild(): void
     {
-        $request = $this->prophesize(RequestInterface::class)->reveal();
-        $stringResponse = 'string response';
-        $expectedResponse = $this->prophesize(DataTransferObjectInterface::class)->reveal();
+        $request = $this->createMock(RequestInterface::class);
+        $stringResponse = '::string-response::';
+        $expectedResponse = $this->createMock(DataTransferObjectInterface::class);
 
-        $supportedBuilder = $this->prophesize(ObjectBuilderInterface::class);
+        $supportedBuilder = $this->createMock(ObjectBuilderInterface::class);
         $supportedBuilder
-            ->supports($request)
-            ->shouldBeCalledOnce()
+            ->expects(self::once())
+            ->method('supports')
+            ->with($request)
             ->willReturn(true)
         ;
+
         $supportedBuilder
-            ->build($stringResponse, $request)
+            ->method('build')
+            ->with($stringResponse, $request)
             ->willReturn($expectedResponse)
         ;
 
-        $notSupportedBuilder = $this->prophesize(ObjectBuilderInterface::class);
+        $notSupportedBuilder = $this->createMock(ObjectBuilderInterface::class);
         $notSupportedBuilder
-            ->supports($request)
-            ->shouldBeCalledOnce()
+            ->expects(self::once())
+            ->method('supports')
+            ->with($request)
             ->willReturn(false)
         ;
+
         $notSupportedBuilder
-            ->build($stringResponse, $request)
-            ->shouldNotBeCalled()
+            ->expects(self::never())
+            ->method('build')
+            ->with($stringResponse, $request)
         ;
 
-        $secondNotSupportedBuilder = $this->prophesize(ObjectBuilderInterface::class);
+        $secondNotSupportedBuilder = $this->createMock(ObjectBuilderInterface::class);
         $secondNotSupportedBuilder
-            ->supports($request)
-            ->shouldNotBeCalled()
+            ->expects(self::never())
+            ->method('supports')
+            ->with($request)
         ;
+
         $secondNotSupportedBuilder
-            ->build($stringResponse, $request)
-            ->shouldNotBeCalled()
+            ->expects(self::never())
+            ->method('build')
+            ->with($stringResponse, $request)
         ;
 
         $builder = new ObjectBuilder([
-            $notSupportedBuilder->reveal(),
-            $supportedBuilder->reveal(),
-            $secondNotSupportedBuilder->reveal(),
+            $notSupportedBuilder,
+            $supportedBuilder,
+            $secondNotSupportedBuilder,
         ]);
 
         $response = $builder->build($request, $stringResponse);

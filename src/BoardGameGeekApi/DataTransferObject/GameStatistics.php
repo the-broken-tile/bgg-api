@@ -4,12 +4,7 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
-final class GameStatistics
+final readonly class GameStatistics
 {
-    public GameRatings $ratings;
-
-    public function __construct()
-    {
-        $this->ratings = new GameRatings();
-    }
+    public function __construct(public GameRatings $ratings) {}
 }

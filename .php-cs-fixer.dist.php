@@ -4,6 +4,7 @@ $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__);
 
 $config = new PhpCsFixer\Config();
+
 return $config->setRules([
     '@PSR1' => true,
     '@PSR12' => true,
@@ -21,5 +22,16 @@ return $config->setRules([
         'call_type' => 'self',
     ],
     'php_unit_strict' => false, // DTOs can be compared non-strictly.
+    'native_function_invocation' => false,
+    'trailing_comma_in_multiline' => [
+        'after_heredoc' => true,
+        'elements' => [
+            'arguments',
+            'array_destructuring',
+            'arrays',
+            'match',
+            'parameters',
+        ],
+    ],
 ])
     ->setFinder($finder);

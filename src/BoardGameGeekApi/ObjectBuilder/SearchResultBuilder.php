@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\BoardGameGeekApi\ObjectBuilder;
 
-use DOMElement;
 use Symfony\Component\DomCrawler\Crawler;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameName;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\SearchItem;
@@ -21,36 +20,31 @@ final class SearchResultBuilder extends AbstractObjectBuilder
 
     public function build(string $response, RequestInterface $request): SearchResults
     {
-        $crawler = new Crawler($response);
-        $items = $crawler->filter(self::ITEMS)->eq(0);
-        $results = new SearchResults();
-        $results->total = (int) $items->attr(self::TOTAL);
-        $results->items = $this->getItems($crawler);
-
-        return $results;
+        return new SearchResults($this->getItems(new Crawler($response)));
     }
 
     /** @return SearchItem[] */
     private function getItems(Crawler $crawler): array
     {
         $items = [];
-        /** @var DOMElement $itemElement */
+
+        /** @var \DOMElement $itemElement */
         foreach ($crawler->filter(self::ITEM) as $itemElement) {
             $itemCrawler = new Crawler($itemElement);
             $name = $itemCrawler->filter(self::NAME)->eq(0);
             $yearPublished = $itemCrawler->filter(self::YEAR_PUBLISHED);
             $value = $name->attr(self::VALUE);
-            \assert(\is_string($value));
+            assert(is_string($value));
 
             $items[] = new SearchItem(
-                $this->getId($itemCrawler),
-                $itemElement->getAttribute(self::TYPE),
-                new GameName(
+                id: $this->getId($itemCrawler),
+                type: $itemElement->getAttribute(self::TYPE),
+                name: new GameName(
                     1,
                     $name->attr(self::TYPE),
                     $value,
                 ),
-                $yearPublished->count() ? (int) $yearPublished->attr(self::VALUE) : null,
+                yearPublished: $yearPublished->count() ? (int) $yearPublished->attr(self::VALUE) : null,
             );
         }
 

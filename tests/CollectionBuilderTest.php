@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\Test;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\Collection;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\CollectionItem;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\CollectionStatus;
@@ -13,6 +15,7 @@ use TheBrokenTile\BoardGameGeekApi\DataTransferObject\CollectionVersion;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameLink;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameName;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameRank;
+use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameRatings;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameStatistics;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\CollectionBuilder;
 use TheBrokenTile\BoardGameGeekApi\Request\CollectionRequest;
@@ -20,32 +23,26 @@ use TheBrokenTile\BoardGameGeekApi\Request\UserRequest;
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 /**
- * @coversDefaultClass \TheBrokenTile\BoardGameGeekApi\ObjectBuilder\CollectionBuilder
- *
  * @internal
  */
+#[CoversClass(CollectionBuilder::class)]
 final class CollectionBuilderTest extends TestCase
 {
-    use ProphecyTrait;
-
-    /**
-     * @covers ::supports
-     */
     public function testSupports(): void
     {
         $collectionBuilder = new CollectionBuilder();
 
-        self::assertTrue($collectionBuilder->supports(new CollectionRequest('username')));
+        self::assertTrue($collectionBuilder->supports(new CollectionRequest('::username::')));
 
-        self::assertFalse($collectionBuilder->supports(new UserRequest('username')));
+        self::assertFalse($collectionBuilder->supports(new UserRequest('::username::')));
     }
 
     /**
-     * @covers ::build
-     *
      * @param GameName[] $itemNames
-     * @dataProvider buildDataProvider
+     *
+     * @throws Exception
      */
+    #[DataProvider('provideBuildCases')]
     public function testBuild(
         int $itemIndex,
         string $fixture,
@@ -63,20 +60,21 @@ final class CollectionBuilderTest extends TestCase
         ?int $itemNumberOfPlays,
         ?string $itemComment,
         ?CollectionVersion $itemVersion,
-        ?GameStatistics $itemStats
+        ?GameStatistics $itemStats,
     ): void {
         $collectionBuilder = new CollectionBuilder();
-        $response = file_get_contents(__DIR__.$fixture);
-        \assert(\is_string($response));
 
-        $collection = $collectionBuilder->build($response, $this->prophesize(RequestInterface::class)->reveal());
+        /** @var string $response */
+        $response = file_get_contents(__DIR__.$fixture);
+
+        $collection = $collectionBuilder->build($response, $this->createMock(RequestInterface::class));
         self::assertInstanceOf(Collection::class, $collection);
 
         self::assertSame($totalItems, $collection->totalItems);
         self::assertCount($totalItems, $collection->items);
         self::assertSame($pubDate, $collection->pubDate);
 
-        //Items
+        // Items
         $item = $collection->items[$itemIndex];
         self::assertInstanceOf(CollectionItem::class, $item);
         self::assertSame($itemType, $item->objectType);
@@ -87,7 +85,7 @@ final class CollectionBuilderTest extends TestCase
         self::assertSame($itemThumbnail, $item->thumbnail);
         self::assertEquals($itemNames, $item->names);
 
-        //Status
+        // Status
         self::assertEquals($itemStatus, $item->status);
         self::assertSame($itemYearPublished, $item->yearPublished);
         self::assertSame($itemNumberOfPlays, $item->numberOfPlays);
@@ -99,21 +97,21 @@ final class CollectionBuilderTest extends TestCase
     /**
      * @return array<string, mixed[]>
      */
-    public function buildDataProvider(): array
+    public static function provideBuildCases(): iterable
     {
         $base = [
             'itemIndex' => 0,
-            'fixture' => null, //placeholder
-            'pubDate' => null, //placeholder
+            'fixture' => null, // placeholder
+            'pubDate' => null, // placeholder
             'totalItems' => 480,
             'itemType' => 'thing',
-            'itemId' => null, //placeholder
+            'itemId' => null, // placeholder
             'itemSubType' => 'boardgame',
-            'itemCollectionId' => null, //placeholder
+            'itemCollectionId' => null, // placeholder
             'itemImage' => null,
             'itemThumbnail' => null,
-            'itemNames' => null, //placeholder
-            'itemStatus' => null, //placeholder
+            'itemNames' => null, // placeholder
+            'itemStatus' => null, // placeholder
             'itemYearPublished' => null,
             'itemNumberOfPlays' => null,
             'itemComment' => null,
@@ -140,7 +138,7 @@ final class CollectionBuilderTest extends TestCase
                     false,
                     false,
                     '2018-03-02 05:30:09',
-                    null
+                    null,
                 ),
             ]),
             'collection' => array_merge($base, [
@@ -161,7 +159,7 @@ final class CollectionBuilderTest extends TestCase
                     false,
                     false,
                     '2018-03-02 05:30:09',
-                    null
+                    null,
                 ),
                 'itemYearPublished' => 2016,
                 'itemNumberOfPlays' => 1,
@@ -185,12 +183,12 @@ final class CollectionBuilderTest extends TestCase
                     false,
                     false,
                     '2018-03-02 05:30:09',
-                    null
+                    null,
                 ),
                 'itemYearPublished' => 2016,
                 'itemNumberOfPlays' => 1,
                 'itemComment' => "Spiel'17",
-                'itemStats' => $this->buildStatistics(
+                'itemStats' => self::buildStatistics(
                     1024,
                     5.51024,
                     5.49373,
@@ -216,15 +214,15 @@ final class CollectionBuilderTest extends TestCase
                     false,
                     false,
                     '2018-03-02 05:30:09',
-                    null
+                    null,
                 ),
-                'itemStats' => $this->buildStatistics(
+                'itemStats' => self::buildStatistics(
                     null,
                     5.51024,
                     5.49373,
                     null,
                     null,
-                    []
+                    [],
                 ),
             ]),
             'version' => array_merge($base, [
@@ -246,11 +244,11 @@ final class CollectionBuilderTest extends TestCase
                     false,
                     false,
                     '2015-12-31 03:25:41',
-                    null
+                    null,
                 ),
                 'itemYearPublished' => 2015,
                 'itemNumberOfPlays' => 0,
-                'itemVersion' => $this->createVersion(
+                'itemVersion' => self::createVersion(
                     214187,
                     CollectionVersion::TYPE_VERSION,
                     'https://cf.geekdo-images.com/EjLDriIcasQlJQUHqRfOtQ__original/img/rJMMssiJCDOo_eElyDSybnrv_Zc=/0x0/filters:format(jpeg)/pic1721930.jpg',
@@ -261,7 +259,7 @@ final class CollectionBuilderTest extends TestCase
                         new GameLink(69356, GameLink::TYPE_ARTIST, 'Ludwin Schouten'),
                         new GameLink(2184, GameLink::TYPE_LANGUAGE, 'English'),
                     ],
-                    [new GameName(1, GameName::TYPE_PRIMARY, 'English first edition')]
+                    [new GameName(1, GameName::TYPE_PRIMARY, 'English first edition')],
                 ),
             ]),
         ];
@@ -270,15 +268,15 @@ final class CollectionBuilderTest extends TestCase
     /**
      * @param GameRank[] $ranks
      */
-    private function buildStatistics(
+    private static function buildStatistics(
         ?int $usersRated,
         float $average,
         float $bayesAverage,
         ?float $stdDev,
         ?float $median,
-        array $ranks
+        array $ranks,
     ): GameStatistics {
-        $stats = new GameStatistics();
+        $stats = new GameStatistics(new GameRatings());
         $stats->ratings->usersRated = $usersRated;
         $stats->ratings->average = $average;
         $stats->ratings->bayesAverage = $bayesAverage;
@@ -293,8 +291,14 @@ final class CollectionBuilderTest extends TestCase
      * @param GameLink[] $links
      * @param GameName[] $names
      */
-    private function createVersion(int $id, string $type, string $image, string $thumbnail, array $links, array $names): CollectionVersion
-    {
+    private static function createVersion(
+        int $id,
+        string $type,
+        string $image,
+        string $thumbnail,
+        array $links,
+        array $names,
+    ): CollectionVersion {
         $version = new CollectionVersion($id, $type);
         $version->image = $image;
         $version->thumbnail = $thumbnail;

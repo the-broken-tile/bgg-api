@@ -6,18 +6,10 @@ namespace TheBrokenTile\BoardGameGeekApi\Request;
 
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
-final class RetrySearchRequest implements RequestInterface
+final readonly class RetrySearchRequest implements RequestInterface
 {
-    private RequestInterface $request;
-    /** @var array<string, string> */
-    private array $overwrites;
-
     /** @param array<string, string> $overwrites */
-    public function __construct(RequestInterface $request, array $overwrites)
-    {
-        $this->request = $request;
-        $this->overwrites = $overwrites;
-    }
+    public function __construct(private RequestInterface $request, private array $overwrites) {}
 
     public function getType(): string
     {

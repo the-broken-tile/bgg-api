@@ -3,6 +3,8 @@
 namespace TheBrokenTile\BoardGameGeekApi;
 
 use RuntimeException;
+use Symfony\Component\Cache\Adapter\FilesystemTagAwareAdapter;
+use Symfony\Component\HttpClient\CurlHttpClient;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\GameBuilder;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilder;
 use TheBrokenTile\BoardGameGeekApi\Request\GameRequest;
@@ -13,13 +15,17 @@ if (count($argv) < 2) {
     throw new RunTimeException('First argument is required');
 }
 
-$ids = explode(RequestInterface::PARAM_VALUE_SEPARATOR, $argv[1]);
+$ids = array_map('intval', explode(RequestInterface::PARAM_VALUE_SEPARATOR, $argv[1]));
 $stats = (bool) ($argv[2] ?? false);
 
 $client = new Client(
     new ObjectBuilder([
         new GameBuilder(),
     ]),
+    new CurlHttpClient(),
+    new FilesystemTagAwareAdapter(),
+    new UrlGenerator(),
+    new CacheTagGenerator(),
 );
 
 $request = new GameRequest(...$ids);
