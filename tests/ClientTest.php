@@ -2,71 +2,80 @@
 
 declare(strict_types=1);
 
-namespace TheBrokenTile\Test\BoardGameGeekApi;
+namespace TheBrokenTile\Test;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\MockObject\Runtime\PropertyHook;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use TheBrokenTile\BoardGameGeekApi\CacheTagGeneratorInterface;
 use TheBrokenTile\BoardGameGeekApi\Client;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterface;
+use TheBrokenTile\BoardGameGeekApi\Exception\ExceptionInterface;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilderManagerInterface;
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 use TheBrokenTile\BoardGameGeekApi\UrlGeneratorInterface;
 
 /**
- * @coversDefaultClass \TheBrokenTile\BoardGameGeekApi\Client
- *
  * @internal
  */
+#[CoversClass(Client::class)]
 final class ClientTest extends TestCase
 {
-    use ProphecyTrait;
-
     /**
-     * @covers ::request
+     * @throws Exception
+     * @throws ExceptionInterface
      */
     public function testRequest(): void
     {
-        $httpClient = $this->prophesize(HttpClientInterface::class);
-        $cache = $this->prophesize(TagAwareCacheInterface::class);
-        $objectBuilder = $this->prophesize(ObjectBuilderManagerInterface::class);
+        $httpClient = $this->createMock(HttpClientInterface::class);
+        $cache = $this->createMock(TagAwareCacheInterface::class);
+        $objectBuilder = $this->createMock(ObjectBuilderManagerInterface::class);
 
-        $stringResponse = 'response';
+        $stringResponse = '::response::';
 
-        $cache->get(Argument::type('string'), Argument::type('callable'))
+        $cache->expects(self::once())
+            ->method('get')
+            ->with(self::isString(), self::isCallable())
             ->willReturn($stringResponse)
         ;
 
-        $request = $this->prophesize(RequestInterface::class);
-        $request->getType()->willReturn('type');
-        $request->getParams()->willReturn([]);
-        $request = $request->reveal();
+        $request = $this->createMock(RequestInterface::class);
+        $request->method('getType')
+            ->willReturn('::type::')
+        ;
+        $request->method('getParams')
+            ->willReturn([])
+        ;
 
-        $thing = $this->prophesize(DataTransferObjectInterface::class);
-        $thing->getTotalItems()->willReturn(1);
-        $thing = $thing->reveal();
+        $thing = $this->createMock(DataTransferObjectInterface::class);
+        $thing->method(PropertyHook::get('totalItems'))
+            ->willReturn(1)
+        ;
 
-        $objectBuilder->build($request, $stringResponse)
-            ->shouldBeCalledOnce()
+        $objectBuilder->expects(self::once())
+            ->method('build')
             ->willReturn($thing)
         ;
 
-        $urlGenerator = $this->prophesize(UrlGeneratorInterface::class);
-        $urlGenerator->generate($request)->willReturn('boardgamegeek.api');
+        $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        $urlGenerator->method('generate')
+            ->with($request)
+            ->willReturn('::boardgamegeek.api::')
+        ;
 
-        $cacheTagGenerator = $this->prophesize(CacheTagGeneratorInterface::class);
+        $cacheTagGenerator = $this->createMock(CacheTagGeneratorInterface::class);
 
         $client = new Client(
-            $objectBuilder->reveal(),
-            $httpClient->reveal(),
-            $cache->reveal(),
-            $urlGenerator->reveal(),
-            $cacheTagGenerator->reveal(),
+            $objectBuilder,
+            $httpClient,
+            $cache,
+            $urlGenerator,
+            $cacheTagGenerator,
         );
 
-        self::assertSame($thing, $client->request($request)->getData());
+        self::assertSame($thing, $client->request($request)->data);
     }
 }

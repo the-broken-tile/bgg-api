@@ -4,20 +4,15 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
-final class GamePoll
+final readonly class GamePoll
 {
-    public string $name;
-    public string $title;
-    public int $totalVotes;
     /**
-     * @var PollResult[]
+     * @param PollResult[] $results
      */
-    public array $results = [];
-
-    public function __construct(string $name, string $title, int $totalVotes)
-    {
-        $this->name = $name;
-        $this->title = $title;
-        $this->totalVotes = $totalVotes;
-    }
+    public function __construct(
+        public string $name,
+        public string $title,
+        public int $totalVotes,
+        public array $results,
+    ) {}
 }

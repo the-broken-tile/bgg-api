@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\BoardGameGeekApi\ObjectBuilder;
 
-use DOMElement;
 use Symfony\Component\DomCrawler\Crawler;
-use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterface;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\User;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserBuddy;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserGuild;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserHotItem;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\UserTopItem;
+use TheBrokenTile\BoardGameGeekApi\Exception\InvalidResponseException;
 use TheBrokenTile\BoardGameGeekApi\Request\UserRequest;
 use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
@@ -24,13 +23,11 @@ final class UserBuilder implements ObjectBuilderInterface
 
     /**
      * @throws InvalidResponseException
-     *
-     * @return User
      */
-    public function build(string $response, RequestInterface $request): DataTransferObjectInterface
+    public function build(string $response, RequestInterface $request): User
     {
         $user = new User();
-        $crawler = (new Crawler($response))->filter(self::USER)->eq(0);
+        $crawler = new Crawler($response)->filter(self::USER)->eq(0);
 
         $id = $crawler->attr(self::ID);
         if (!is_numeric($id)) {
@@ -38,7 +35,7 @@ final class UserBuilder implements ObjectBuilderInterface
         }
         $user->id = (int) $id;
         $name = $crawler->attr(self::NAME);
-        if (!\is_string($name)) {
+        if (!is_string($name)) {
             throw new InvalidResponseException('"name" should be a string');
         }
         $user->name = $name;
@@ -72,11 +69,12 @@ final class UserBuilder implements ObjectBuilderInterface
         if (0 === $buddies->count()) {
             return;
         }
-        /** @var DOMElement $buddy */
+
+        /** @var \DOMElement $buddy */
         foreach ($buddies->filter(self::USER_BUDDY) as $buddy) {
             $user->buddies[] = new UserBuddy(
-                (int) $buddy->getAttribute(self::ID),
-                $buddy->getAttribute(self::NAME),
+                id: (int) $buddy->getAttribute(self::ID),
+                name: $buddy->getAttribute(self::NAME),
             );
         }
     }
@@ -88,11 +86,11 @@ final class UserBuilder implements ObjectBuilderInterface
             return;
         }
 
-        /** @var DOMElement $guild */
+        /** @var \DOMElement $guild */
         foreach ($guilds->filter(self::USER_GUILD) as $guild) {
             $user->guilds[] = new UserGuild(
-                (int) $guild->getAttribute(self::ID),
-                $guild->getAttribute(self::NAME),
+                id: (int) $guild->getAttribute(self::ID),
+                name: $guild->getAttribute(self::NAME),
             );
         }
     }
@@ -103,13 +101,14 @@ final class UserBuilder implements ObjectBuilderInterface
         if (0 === $top->count()) {
             return;
         }
-        /** @var DOMElement $item */
+
+        /** @var \DOMElement $item */
         foreach ($top->filter(self::ITEM) as $item) {
             $user->top[] = new UserTopItem(
-                (int) $item->getAttribute(self::ID),
-                (int) $item->getAttribute(self::RANK),
-                $item->getAttribute(self::NAME),
-                $item->getAttribute(self::VALUE),
+                id: (int) $item->getAttribute(self::ID),
+                rank: (int) $item->getAttribute(self::RANK),
+                name: $item->getAttribute(self::NAME),
+                type: $item->getAttribute(self::VALUE),
             );
         }
     }
@@ -121,13 +120,13 @@ final class UserBuilder implements ObjectBuilderInterface
             return;
         }
 
-        /** @var DOMElement $item */
+        /** @var \DOMElement $item */
         foreach ($hot->filter(self::ITEM) as $item) {
             $user->hot[] = new UserHotItem(
-                (int) $item->getAttribute(self::ID),
-                (int) $item->getAttribute(self::RANK),
-                $item->getAttribute(self::NAME),
-                $item->getAttribute(self::VALUE),
+                id: (int) $item->getAttribute(self::ID),
+                rank: (int) $item->getAttribute(self::RANK),
+                name: $item->getAttribute(self::NAME),
+                type: $item->getAttribute(self::VALUE),
             );
         }
     }

@@ -6,13 +6,10 @@ namespace TheBrokenTile\BoardGameGeekApi\DataTransferObject;
 
 final class Collection implements DataTransferObjectInterface
 {
-    public int $totalItems;
+    public int $totalItems {get => count($this->items); }
+
     public string $pubDate;
+
     /** @var CollectionItem[] */
     public array $items = [];
-
-    public function getTotalItems(): int
-    {
-        return $this->totalItems;
-    }
 }

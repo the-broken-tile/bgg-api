@@ -8,17 +8,14 @@ use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 final class CollectionRequest implements RequestInterface
 {
-    private string $username;
     private ?string $version = null;
     private ?string $brief = null;
     private ?string $stats = null;
+
     /** @var array<string, string> */
     private array $filters = [];
 
-    public function __construct(string $username)
-    {
-        $this->username = $username;
-    }
+    public function __construct(private readonly string $username) {}
 
     public function getType(): string
     {
@@ -60,17 +57,14 @@ final class CollectionRequest implements RequestInterface
         return $this;
     }
 
-    /**
-     * @param bool|int|string $value
-     */
-    public function filter(string $name, $value): self
+    public function filter(string $name, bool|int|string $value): self
     {
-        if (\is_bool($value)) {
+        if (is_bool($value)) {
             $this->filters[$name] = $value ? '1' : '0';
 
             return $this;
         }
-        if (\is_int($value)) {
+        if (is_int($value)) {
             $this->filters[$name] = (string) $value;
 
             return $this;

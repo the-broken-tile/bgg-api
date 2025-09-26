@@ -3,14 +3,11 @@
 namespace TheBrokenTile\BoardGameGeekApi;
 
 use RuntimeException;
-use Symfony\Component\Cache\Adapter\TagAwareAdapter;
+use Symfony\Component\Cache\Adapter\FilesystemTagAwareAdapter;
 use Symfony\Component\HttpClient\CurlHttpClient;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\GameBuilder;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilder;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\RetryExactSearchBuilder;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\SearchResultBuilder;
-use TheBrokenTile\BoardGameGeekApi\Request\GameRequest;
 use TheBrokenTile\BoardGameGeekApi\Request\SearchRequest;
 
 require dirname(__DIR__).'/vendor/autoload.php';
@@ -28,6 +25,10 @@ $client = new Client(
         $searchResultBuilder,
         new RetryExactSearchBuilder($searchResultBuilder),
     ]),
+    new CurlHttpClient(),
+    new FilesystemTagAwareAdapter(),
+    new UrlGenerator(),
+    new CacheTagGenerator(),
 );
 
 $request = new SearchRequest($query, true);

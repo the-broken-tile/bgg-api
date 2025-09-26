@@ -4,23 +4,15 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\BoardGameGeekApi;
 
-final class UrlGenerator implements UrlGeneratorInterface
+final readonly class UrlGenerator implements UrlGeneratorInterface
 {
-    private const URL = 'https://api.geekdo.com/xmlapi2';
-    private const DEFAULT_VALUE_FIXES = [
+    private const string URL = 'https://api.geekdo.com/xmlapi2';
+    private const array DEFAULT_VALUE_FIXES = [
         RequestInterface::PARAM_QUERY => ['/:|!|,/', ''],
     ];
 
-    private string $baseUrl;
-    /** @var array<string, string[]> */
-    private array $valueFixes;
-
     /** @param array<string, string[]> $valueFixes */
-    public function __construct(string $baseUrl = self::URL, array $valueFixes = self::DEFAULT_VALUE_FIXES)
-    {
-        $this->baseUrl = $baseUrl;
-        $this->valueFixes = $valueFixes;
-    }
+    public function __construct(private string $baseUrl = self::URL, private array $valueFixes = self::DEFAULT_VALUE_FIXES) {}
 
     public function generate(RequestInterface $request): string
     {
@@ -40,13 +32,10 @@ final class UrlGenerator implements UrlGeneratorInterface
     private function fixValues(array $params): array
     {
         foreach ($params as $key => $value) {
-            \assert(\is_string($value));
             if (isset($this->valueFixes[$key])) {
-                /** @var string $pattern */
-                /** @var string $replace */
                 [$pattern, $replace] = $this->valueFixes[$key];
                 $fixed = preg_replace($pattern, $replace, $value);
-                \assert(\is_string($fixed));
+                assert(is_string($fixed));
                 $params[$key] = $fixed;
             }
         }

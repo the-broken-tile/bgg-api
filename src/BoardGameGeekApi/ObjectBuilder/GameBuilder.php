@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\BoardGameGeekApi\ObjectBuilder;
 
-use DOMElement;
 use Symfony\Component\DomCrawler\Crawler;
-use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObject;
-use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterface;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\Expansion;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\Game;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\GameResults;
@@ -21,25 +18,22 @@ final class GameBuilder extends AbstractObjectBuilder
         return $request instanceof GameRequest;
     }
 
-    /**
-     * @return GameResults
-     */
-    public function build(string $response, RequestInterface $request): DataTransferObjectInterface
+    public function build(string $response, RequestInterface $request): GameResults
     {
-        $results = new GameResults();
         $crawler = new Crawler($response);
 
-        /** @var DOMElement $item */
+        $items = [];
+
+        /** @var \DOMElement $item */
         foreach ($crawler->filter(self::ITEM) as $item) {
             $itemCrawler = new Crawler($item);
-            $results->items[] = $this->buildItem($itemCrawler);
-            ++$results->total;
+            $items[] = $this->buildItem($itemCrawler);
         }
 
-        return $results;
+        return new GameResults($items);
     }
 
-    private function buildItem(Crawler $crawler): DataTransferObject
+    private function buildItem(Crawler $crawler): Expansion|Game
     {
         $object = $this->createObject($crawler);
 
@@ -62,7 +56,7 @@ final class GameBuilder extends AbstractObjectBuilder
         return $object;
     }
 
-    private function createObject(Crawler $crawler): DataTransferObject
+    private function createObject(Crawler $crawler): Expansion|Game
     {
         if ('boardgame' === $crawler->attr(self::TYPE)) {
             return new Game();

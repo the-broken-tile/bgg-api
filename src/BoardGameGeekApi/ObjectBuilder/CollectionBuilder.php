@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TheBrokenTile\BoardGameGeekApi\ObjectBuilder;
 
-use DOMElement;
 use Symfony\Component\DomCrawler\Crawler;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\Collection;
 use TheBrokenTile\BoardGameGeekApi\DataTransferObject\CollectionItem;
@@ -33,10 +32,9 @@ final class CollectionBuilder extends AbstractObjectBuilder
     {
         $collection = new Collection();
         $crawler = new Crawler($response);
-        $collection->totalItems = (int) $crawler->filter(self::ITEMS)->attr(self::TOTAL_ITEMS);
         $pubDate = $crawler->filter(self::ITEMS)->attr(self::PUBLISH_DATE);
 
-        \assert(\is_string($pubDate));
+        assert(is_string($pubDate));
         $collection->pubDate = $pubDate;
 
         $this->addItems($crawler, $collection);
@@ -46,13 +44,13 @@ final class CollectionBuilder extends AbstractObjectBuilder
 
     private function addItems(Crawler $crawler, Collection $collection): void
     {
-        /** @var DOMElement $itemElement */
+        /** @var \DOMElement $itemElement */
         foreach ($crawler->filter(sprintf('%s > %s', self::ITEMS, self::ITEM)) as $itemElement) {
             $item = new CollectionItem(
-                (int) $itemElement->getAttribute(self::OBJECT_ID),
-                $itemElement->getAttribute(self::OBJECT_TYPE),
-                $itemElement->getAttribute(self::SUB_TYPE),
-                (int) $itemElement->getAttribute(self::COLLECTION_ID),
+                objectId: (int) $itemElement->getAttribute(self::OBJECT_ID),
+                objectType: $itemElement->getAttribute(self::OBJECT_TYPE),
+                subType: $itemElement->getAttribute(self::SUB_TYPE),
+                collId: (int) $itemElement->getAttribute(self::COLLECTION_ID),
             );
             $itemCrawler = new Crawler($itemElement);
 
@@ -80,10 +78,7 @@ final class CollectionBuilder extends AbstractObjectBuilder
         $item->yearPublished = (int) $yearPublishedElement->text();
     }
 
-    /**
-     * @param CollectionItem|CollectionVersion $item
-     */
-    private function addImage(Crawler $crawler, $item): void
+    private function addImage(Crawler $crawler, CollectionItem|CollectionVersion $item): void
     {
         $image = $crawler->filter(self::IMAGE);
         if (0 === $image->count()) {
@@ -92,10 +87,7 @@ final class CollectionBuilder extends AbstractObjectBuilder
         $item->image = $image->text();
     }
 
-    /**
-     * @param CollectionItem|CollectionVersion $item
-     */
-    private function addThumbnail(Crawler $crawler, $item): void
+    private function addThumbnail(Crawler $crawler, CollectionItem|CollectionVersion $item): void
     {
         $thumbnail = $crawler->filter(self::THUMBNAIL);
         if (0 === $thumbnail->count()) {
@@ -104,12 +96,9 @@ final class CollectionBuilder extends AbstractObjectBuilder
         $item->thumbnail = $thumbnail->text();
     }
 
-    /**
-     * @param CollectionItem|CollectionVersion $item
-     */
-    private function addName(Crawler $crawler, $item): void
+    private function addName(Crawler $crawler, CollectionItem|CollectionVersion $item): void
     {
-        /** @var DOMElement $name */
+        /** @var \DOMElement $name */
         foreach ($crawler->children(self::NAME) as $name) {
             $item->names[] = new GameName(
                 (int) $name->getAttribute(self::SORT_INDEX),
@@ -124,19 +113,19 @@ final class CollectionBuilder extends AbstractObjectBuilder
         $status = $itemCrawler->filter(self::COLLECTION_STATUS);
 
         $lastModified = $status->attr(self::LAST_MODIFIED);
-        \assert(\is_string($lastModified));
+        assert(is_string($lastModified));
         $wishlistPriority = $status->attr(self::COLLECTION_WISHLIST_PRIORITY);
         $item->status = new CollectionStatus(
-            (bool) $status->attr(self::COLLECTION_OWN),
-            (bool) $status->attr(self::COLLECTION_PREVIOUSLY_OWN),
-            (bool) $status->attr(self::COLLECTION_FOR_TRADE),
-            (bool) $status->attr(self::COLLECTION_WANT),
-            (bool) $status->attr(self::COLLECTION_WANT_TO_PLAY),
-            (bool) $status->attr(self::COLLECTION_WANT_TO_BUY),
-            (bool) $status->attr(self::COLLECTION_WISHLIST),
-            (bool) $status->attr(self::COLLECTION_PRE_ORDERED),
-            $lastModified,
-            null === $wishlistPriority ? null : (int) $wishlistPriority,
+            own: (bool) $status->attr(self::COLLECTION_OWN),
+            previouslyOwned: (bool) $status->attr(self::COLLECTION_PREVIOUSLY_OWN),
+            forTrade: (bool) $status->attr(self::COLLECTION_FOR_TRADE),
+            want: (bool) $status->attr(self::COLLECTION_WANT),
+            wantToPlay: (bool) $status->attr(self::COLLECTION_WANT_TO_PLAY),
+            wantToBuy: (bool) $status->attr(self::COLLECTION_WANT_TO_BUY),
+            wishlist: (bool) $status->attr(self::COLLECTION_WISHLIST),
+            preOrdered: (bool) $status->attr(self::COLLECTION_PRE_ORDERED),
+            lastModified: $lastModified,
+            wishlistPriority: null === $wishlistPriority ? null : (int) $wishlistPriority,
         );
     }
 
@@ -166,11 +155,11 @@ final class CollectionBuilder extends AbstractObjectBuilder
             return;
         }
 
-        /** @var DOMElement $versionItem */
+        /** @var \DOMElement $versionItem */
         foreach ($version->filter(self::ITEM) as $versionItem) {
             $item->version = new CollectionVersion(
-                (int) $versionItem->getAttribute(self::ID),
-                $versionItem->getAttribute(self::TYPE),
+                id: (int) $versionItem->getAttribute(self::ID),
+                type: $versionItem->getAttribute(self::TYPE),
             );
             $versionCrawler = new Crawler($versionItem);
             $this->addImage($versionCrawler, $item->version);
@@ -182,12 +171,12 @@ final class CollectionBuilder extends AbstractObjectBuilder
 
     private function addLinks(Crawler $crawler, CollectionVersion $item): void
     {
-        /** @var DOMElement $link */
+        /** @var \DOMElement $link */
         foreach ($crawler->children(self::LINK) as $link) {
             $item->links[] = new GameLink(
-                (int) $link->getAttribute(self::ID),
-                $link->getAttribute(self::TYPE),
-                $link->getAttribute(self::VALUE),
+                id: (int) $link->getAttribute(self::ID),
+                type: $link->getAttribute(self::TYPE),
+                value: $link->getAttribute(self::VALUE),
             );
         }
     }

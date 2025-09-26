@@ -8,17 +8,13 @@ use TheBrokenTile\BoardGameGeekApi\RequestInterface;
 
 final class UserRequest implements RequestInterface
 {
-    private string $username;
     private ?string $buddies = null;
     private ?string $guilds = null;
     private string $page = '1';
     private ?string $top = null;
     private ?string $hot = null;
 
-    public function __construct(string $username)
-    {
-        $this->username = $username;
-    }
+    public function __construct(private readonly string $username) {}
 
     public function getType(): string
     {

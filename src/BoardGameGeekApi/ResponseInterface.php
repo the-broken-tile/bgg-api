@@ -8,5 +8,5 @@ use TheBrokenTile\BoardGameGeekApi\DataTransferObject\DataTransferObjectInterfac
 
 interface ResponseInterface
 {
-    public function getData(): DataTransferObjectInterface;
+    public DataTransferObjectInterface $data {get; }
 }

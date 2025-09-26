@@ -3,6 +3,8 @@
 namespace TheBrokenTile\BoardGameGeekApi;
 
 use RuntimeException;
+use Symfony\Component\Cache\Adapter\FilesystemTagAwareAdapter;
+use Symfony\Component\HttpClient\CurlHttpClient;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\CollectionBuilder;
 use TheBrokenTile\BoardGameGeekApi\ObjectBuilder\ObjectBuilder;
 use TheBrokenTile\BoardGameGeekApi\Request\CollectionRequest;
@@ -19,10 +21,10 @@ $client = new Client(
     new ObjectBuilder([
         new CollectionBuilder(),
     ]),
+    new CurlHttpClient(),
+    new FilesystemTagAwareAdapter(),
+    new UrlGenerator(),
+    new CacheTagGenerator(),
 );
 
-var_dump($client->request(
-        (new CollectionRequest($username))
-        ->filter(RequestInterface::PARAM_COLLECTION_FILTER_PREVIOUSLY_OWNED, true),
-    )
-);
+var_dump($client->request(new CollectionRequest($username)));

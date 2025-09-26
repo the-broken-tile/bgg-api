@@ -23,17 +23,18 @@ final class User implements DataTransferObjectInterface
     public string $steamAccount;
     public int $tradeRating;
     public int $marketRating;
+
     /** @var UserBuddy[] */
     public array $buddies = [];
+
     /** @var UserGuild[] */
     public array $guilds = [];
+
     /** @var UserHotItem[] */
     public array $hot = [];
+
     /** @var UserTopItem[] */
     public array $top = [];
 
-    public function getTotalItems(): int
-    {
-        return 1;
-    }
+    public int $totalItems {get => 1; }
 }

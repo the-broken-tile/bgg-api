@@ -10,10 +10,8 @@ final class CollectionVersion
     use LinksTrait;
     use NameTrait;
 
-    public const TYPE_VERSION = 'boardgameversion';
+    public const string TYPE_VERSION = 'boardgameversion';
 
-    public string $type;
-    public int $id;
     public int $yearPublished;
     public string $productCode;
     public float $width;
@@ -21,9 +19,5 @@ final class CollectionVersion
     public float $depth;
     public float $weight;
 
-    public function __construct(int $id, string $type)
-    {
-        $this->id = $id;
-        $this->type = $type;
-    }
+    public function __construct(public int $id, public string $type) {}
 }
